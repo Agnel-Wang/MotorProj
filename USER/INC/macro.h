@@ -7,10 +7,10 @@
  /**
  * @description: set specific rotor to control for code selecting
  */
-//#define PassRobot
-#define TryRobot
-//#define SteeringMotor
-#define ActionMotor
+#define PassRobot
+//#define TryRobot
+#define SteeringMotor
+//#define ActionMotor
 
 /* selet progrom functional unit
  * VER						//流程号是否开启
@@ -38,7 +38,7 @@
 	#ifdef PassRobot
 		#define MOTOR_0_3 0x305
 		#define MOTOR_1_2 0x306
-		#define ID_SELF MOTOR_1_2
+		#define ID_SELF MOTOR_0_3
 		#define GearRatio (104.0f/17.0f)
 	#elif defined TryRobot
 

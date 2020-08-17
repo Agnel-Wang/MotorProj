@@ -4,6 +4,7 @@
 sc32 KickPulse = 100000;
 sc32 KickSP = 120000;
 sc16 KickWaitTim = 1000;
+bool isAutoKick = false;
 
 void param_Init(void)
 {

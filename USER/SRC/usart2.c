@@ -12,7 +12,7 @@ void USART2_Configuration()
   USART2->SR &= ~(1<<5);             //清除RXNE标志位
   USART2->CR1 |= 1<<5;               //使能接收中断
   MY_NVIC_Init(4,1,USART2_IRQn,3);
-  MYDMA_Config(DMA1_Stream6,4,(u32)&USART2->DR,(u32)usart.TxBuffer_UASRT2,USART2_Tx_BufferSize);
+  MYDMA_Config(DMA1_Stream6,4,(u32)&USART2->DR,(u32)usart.TxBuffer_USART2,USART2_Tx_BufferSize);
   DMA_ITConfig(DMA1_Stream6, DMA_IT_TC, ENABLE);//使能传输完成中断
   MY_NVIC_Init(7,1,DMA1_Stream6_IRQn,3);
   USART2->CR3 |= 1<<7;               //DMA1使能发送接收器
@@ -67,15 +67,21 @@ void USART2_IRQHandler(void)
         {
             switch (usart.RxBuffer_USART2[5])
             {
-                case 0x01: 
+                case 0x01: ELMOmotor[1].valSet.speed = atof((char*)(&usart.RxBuffer_USART2[7]));
                   break;
-                case 0x02:
+                case 0x02: ELMOmotor[1].valSet.pulse = atof((char*)(&usart.RxBuffer_USART2[7]));
                   break;
-                case 0x03:
+                case 0x03:PX(1, SetData, 0, 0);
                   break;
-                case 0x04:
+                case 0x04:MO(1, SetData, 1, 0);
                   break;
-                case 0x05:
+                case 0x05:BG(1, 0);
+                  break;
+                case 0x06:MO(1, SetData, 0, 0);
+                  break;
+                case 0x07:SP(1, SetData, ELMOmotor[1].valSet.speed, 0);
+                  break;
+                case 0x08:
                   break;
                 default:;
             } break;
@@ -103,19 +109,39 @@ void UsartLCDshow(void)
     u8 i = 0;//用于串口数据包的下标
 
       /*****主界面****/
-    usart.TxBuffer_UASRT2[i++]=0xee;
-    usart.TxBuffer_UASRT2[i++]=0xb1;
-    usart.TxBuffer_UASRT2[i++]=0x10;
-    usart.TxBuffer_UASRT2[i++]=0x00;
-    usart.TxBuffer_UASRT2[i++]=0x00;
-    usart.TxBuffer_UASRT2[i++]=0x00;
-    usart.TxBuffer_UASRT2[i++]=0x01;
-    usart.TxBuffer_UASRT2[i++]=0x01;
+    usart.TxBuffer_USART2[i++]=0xee;
+    usart.TxBuffer_USART2[i++]=0xb1;
+    usart.TxBuffer_USART2[i++]=0x10;
+    usart.TxBuffer_USART2[i++]=0x00;
+    usart.TxBuffer_USART2[i++]=0x00;
+    usart.TxBuffer_USART2[i++]=0x00;
+    usart.TxBuffer_USART2[i++]=0x01;
+    usart.TxBuffer_USART2[i++]=0x01;
 
-    usart.TxBuffer_UASRT2[i++]=0xff;
-    usart.TxBuffer_UASRT2[i++]=0xfc;
-    usart.TxBuffer_UASRT2[i++]=0xff;
-    usart.TxBuffer_UASRT2[i++]=0xff;
+    usart.TxBuffer_USART2[i++]=0xff;
+    usart.TxBuffer_USART2[i++]=0xfc;
+    usart.TxBuffer_USART2[i++]=0xff;
+    usart.TxBuffer_USART2[i++]=0xff;
+
+      /****T车主界面****/
+    usart.TxBuffer_USART2[i++]=0xee;
+    usart.TxBuffer_USART2[i++]=0xb1;	
+    usart.TxBuffer_USART2[i++]=0x12;	
+    usart.TxBuffer_USART2[i++]=0x00;	
+    usart.TxBuffer_USART2[i++]=0x02;
+
+    usart.TxBuffer_USART2[i++]=0x00;
+    usart.TxBuffer_USART2[i++]=0x0A;
+    usart.TxBuffer_USART2[i++]=0x00;
+    sprintf(str_temp,"%5d",ELMOmotor[1].valReal.pulse);
+    usart.TxBuffer_USART2[i++]=strlen(str_temp);
+    strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
+    i += strlen(str_temp);
+
+    usart.TxBuffer_USART2[i++]=0xff;
+    usart.TxBuffer_USART2[i++]=0xfc;
+    usart.TxBuffer_USART2[i++]=0xff;
+    usart.TxBuffer_USART2[i++]=0xff;    
 
     USART2_Send(i);
 }

@@ -14,8 +14,13 @@ void Motor_Init(void)
         M2006instrin.CURRENT_LIMIT=9000;    M3508instrin.CURRENT_LIMIT=14745;
     }
     {//电机限制保护设置
+      #ifdef SteeringMotor
         Motorlimit.isPosLimitON=true;
         Motorlimit.maxAngle= 187*GearRatio;//轮毂最多选择±0.5圈多一丢丢
+      #else
+        Motorlimit.isPosLimitON=false;
+        Motorlimit.maxAngle= 500;//轮毂最多选择±0.5圈多一丢丢
+      #endif
         Motorlimit.isPosSPLimitOn=true;
         Motorlimit.posSPlimit=1000;
         Motorlimit.isRealseWhenStuck=true;    
@@ -29,7 +34,7 @@ void Motor_Init(void)
     #ifdef SteeringMotor
       #if ID_SELF==MOTOR_0_3
     /****0号电机初始化****/
-    motor[0].intrinsic=M2006instrin;
+    motor[0].intrinsic=M3508instrin;
     motor[0].enable=ENABLE;
     motor[0].begin=false;
     motor[0].mode=position;
@@ -42,7 +47,7 @@ void Motor_Init(void)
 
      /****3号电机初始化****/
     motor[3].intrinsic=M2006instrin;
-    motor[3].enable=ENABLE;
+    motor[3].enable=DISABLE;
     motor[3].begin=false;
     motor[3].mode=position;
     motor[3].valueSet.angle=0;

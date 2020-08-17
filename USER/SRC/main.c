@@ -36,7 +36,7 @@ static void Task_Start(void *pdata)
 	OSTaskCreate(Task_Motor, (void *)0, (OS_STK *)&MOTOR_TASK_STK[MOTOR_STK_SIZE - 1],MOTOR_TASK_PRIO);
 	OSTaskCreate(Task_Elmo, (void *)0, (OS_STK *)&ELMO_TASK_STK[ELMO_STK_SIZE - 1],ELMO_TASK_PRIO);
 	OSTaskCreate(Task_Scope, (void *)0,(OS_STK *)&SCOPE_TASK_STK[SCOPE_STK_SIZE - 1], SCOPE_TASK_PRIO);
-	//Beep_Show(2);//上电提醒
+	Beep_Show(2);//上电提醒
 #ifdef SteeringMotor
   #if ID_SELF==MOTOR_0_3  //ELMO连接判断
 	ELMO_Init(CAN1);OSTimeDly(5);ELMO_Init(CAN1);OSTimeDly(5);ELMO_Init(CAN1);OSTimeDly(5);
@@ -95,7 +95,7 @@ static void Task_Motor(void *pdata)
 
   while (1) 
   {
-
+    
     OSTimeDly(1000);
   }
 }

@@ -28,10 +28,10 @@ typedef struct{
   u8 TxBuffer_USART1[USART1_Tx_BufferSize]; //串口一发送数据
   u8 RxBuffer_USART1[USART1_Rx_BufferSize]; //串口一接收数据
 
-  u8 TxBuffer_UASRT2[USART2_Tx_BufferSize]; //串口二发送数据
+  u8 TxBuffer_USART2[USART2_Tx_BufferSize]; //串口二发送数据
   u8 RxBuffer_USART2[USART2_Rx_BufferSize]; //串口二接收数据
 
-  u8 TxBuffer_UASRT3[USART3_Tx_BufferSize]; //串口三发送数据
+  u8 TxBuffer_USART3[USART3_Tx_BufferSize]; //串口三发送数据
   u8 RxBuffer_USART3[USART3_Rx_BufferSize]; //串口三接收数据
 } Usart_Struct;
 
