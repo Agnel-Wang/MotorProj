@@ -7,10 +7,10 @@
  /**
  * @description: set specific rotor to control for code selecting
  */
-#define PassRobot
-//#define TryRobot
-#define SteeringMotor
-//#define ActionMotor
+//#define PassRobot
+#define TryRobot
+//#define SteeringMotor
+#define ActionMotor
 
 /* selet progrom functional unit
  * VER						//流程号是否开启
@@ -27,7 +27,7 @@
 	#endif
 #elif defined TryRobot
 	#ifdef SteeringMotor
-
+		//nothing
 	#elif defined ActionMotor
 		#define USE_ELMO
 	#endif
