@@ -7,16 +7,18 @@
  /**
  * @description: set specific rotor to control for code selecting
  */
-#define PassRobot
-//#define TryRobot
-#define SteeringMotor
-//#define ActionMotor
+//#define PassRobot
+#define TryRobot
+//#define SteeringMotor
+#define ActionMotor
+
+//USE_SCOPE      是否调用示波器
 
 /* selet progrom functional unit
- * VER						//流程号是否开启
- * USE_VECS					//是否使用VESC
- * USE_ELMO					//是否使用ELMO
- * USE_DJ					//是否使用大疆电机
+ * VER						流程号是否开启
+ * USE_VECS					是否使用VESC
+ * USE_ELMO					是否使用ELMO
+ * USE_DJ					是否使用大疆电机
  */
 #ifdef PassRobot
 	#ifdef SteeringMotor

@@ -8,6 +8,15 @@
 #include "can2.h"
 #include "elmo.h"
 
+#define DJ_MOTOR1_RX 0x201
+#define DJ_MOTOR2_RX 0x202
+#define DJ_MOTOR3_RX 0x203
+#define DJ_MOTOR4_RX 0x204
+#define DJ_MOTOR5_RX 0x205
+#define DJ_MOTOR6_RX 0x206
+#define DJ_MOTOR7_RX 0x207
+#define DJ_MOTOR8_RX 0x208
+
 /****电机模式****/
 enum MOTOR_MODE { duty, current, RPM, brake, zero, position, handbrake};
 

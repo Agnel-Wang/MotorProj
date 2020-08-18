@@ -92,6 +92,8 @@ typedef struct{
 
 extern ELMO_Motor ELMOmotor[5];
 
+// ID, cmd, InConGrpFlag, data
+
 void ELMO_Motor_Init(void);
 void ELMO_Init(CAN_TypeDef* CANx);
 void AC(u32 ID,u8 cmd,...);

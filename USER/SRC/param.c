@@ -1,8 +1,8 @@
 #include "param.h"
 
 /* 踢球常量定义 */
-sc32 KickPulse = 100000;
-sc32 KickSP = 120000;
+sc32 KickPulse = 10000;
+sc32 KickSP = 100;
 sc16 KickWaitTim = 1000;
 bool isAutoKick = false;
 
@@ -10,6 +10,8 @@ void param_Init(void)
 {
     Flag_Init();
     Motor_Init();
+    ELMO_Motor_Init();
+    VESCInit();
 }
 
 void Flag_Init(void)

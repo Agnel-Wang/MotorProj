@@ -1,6 +1,6 @@
 #include "elmo.h"
 
-ELMOParam Flat90, U10, EC_4P_30;
+ELMOParam Flat90, U10, EC_4P_22, EC_4P_30;
 ELMILimit ELMOlimit;
 ELMOArgum ELMOargum;
 ELMO_Motor ELMOmotor[5];
@@ -11,6 +11,7 @@ void ELMO_Motor_Init(void)
 	{//电机内参
 		Flat90.PULSE=4096;		Flat90.RATIO=1;
 		U10.PULSE=4096;			U10.RATIO=1;
+    EC_4P_22.PULSE=4096;  EC_4P_30.RATIO=1;
 		EC_4P_30.PULSE=4096;	EC_4P_30.RATIO=1;
 	}
 	{//电机限制保护

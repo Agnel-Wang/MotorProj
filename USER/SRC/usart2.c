@@ -67,21 +67,21 @@ void USART2_IRQHandler(void)
         {
             switch (usart.RxBuffer_USART2[5])
             {
-                case 0x01: ELMOmotor[1].valSet.speed = atof((char*)(&usart.RxBuffer_USART2[7]));
+                case 0x01: ELMOmotor[0].valSet.speed = atof((char*)(&usart.RxBuffer_USART2[7]));
                   break;
-                case 0x02: ELMOmotor[1].valSet.pulse = atof((char*)(&usart.RxBuffer_USART2[7]));
+                case 0x02: ELMOmotor[0].valSet.pulse = atof((char*)(&usart.RxBuffer_USART2[7]));
                   break;
                 case 0x03:PX(1, SetData, 0, 0);
                   break;
-                case 0x04:MO(1, SetData, 1, 0);
+                case 0x04:MO(1, SetData, 0, 1);
                   break;
                 case 0x05:BG(1, 0);
                   break;
                 case 0x06:MO(1, SetData, 0, 0);
                   break;
-                case 0x07:SP(1, SetData, ELMOmotor[1].valSet.speed, 0);
+                case 0x07:PA(1,SetData,0, ELMOmotor[0].valSet.pulse);
                   break;
-                case 0x08:
+                case 0x08:SP(1, SetData, 0, ELMOmotor[0].valSet.speed);
                   break;
                 default:;
             } break;
@@ -115,7 +115,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x00;
-    usart.TxBuffer_USART2[i++]=0x01;
+    usart.TxBuffer_USART2[i++]=0x05;
     usart.TxBuffer_USART2[i++]=0x01;
 
     usart.TxBuffer_USART2[i++]=0xff;
@@ -133,7 +133,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x0A;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%5d",ELMOmotor[1].valReal.pulse);
+    sprintf(str_temp,"%5d",ELMOmotor[0].valReal.angle);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -145,5 +145,3 @@ void UsartLCDshow(void)
 
     USART2_Send(i);
 }
-
-

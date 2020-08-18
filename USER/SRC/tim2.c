@@ -38,6 +38,11 @@ void TIM2_IRQHandler(void)
             else VESC_Set_Current(i+1,0.0,0);
         }
 #endif
+      if(ELMOmotor[0].valReal.pulse>KickPulse)
+      {
+        SP(1, SetData, 50, 0);
+        BG(1, 0);
+      }
     }
     TIM2->SR &= ~(1<<0);//清除中断标志位
 }

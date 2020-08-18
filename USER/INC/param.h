@@ -38,16 +38,14 @@ typedef struct{
 /****标志位结构体****/
 typedef struct{
     u8 led;
+    bool valve[4];                     //当前电磁阀状态
     volatile bool Can1CtrlList_Enable; // CAN1报文控制表启动标志位
     volatile bool Can2CtrlList_Enable; // CAN2报文控制表启动标志位
     volatile bool Can1SendqueueFULL;   // CAN1发送队列满
     volatile bool Can2SendqueueFULL;   // CAN2发送队列满
     volatile bool CanSendqueueEMPTY;   // CAN队列为空
-    volatile bool has_timeout[8];      // CAN报文接收超时
-    volatile bool poor_contact[8];     //接触不良
     volatile bool Usart1DMASendFinish; // Usart1_DMA传输
     volatile bool Usart2DMASendFinish; // Usart2_DMA传输
-    bool valve[4];                     //当前电磁阀状态
 } FlagTypeDef;
 
 extern sc16 KickWaitTim;

@@ -24,6 +24,12 @@ void CAN2_Configuration()
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	
+  NVIC_InitStructure.NVIC_IRQChannel=CAN2_RX1_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+  
 	/* CAN cell init */
   	CAN_InitStructure.CAN_TTCM=DISABLE;  									//非时间触发通道模式
 	CAN_InitStructure.CAN_ABOM=DISABLE;  									//软件对CAN_MCR寄存器的INRQ位置1，随后清0，一旦监测到128次连续11位的隐性位，就退出离线状态
@@ -44,10 +50,10 @@ void CAN2_Configuration()
 	CAN_FilterInitStructure.CAN_FilterNumber = 14;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =0X201<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow =0X202 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X203 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0X204 << 5;
+	CAN_FilterInitStructure.CAN_FilterIdHigh =DJ_MOTOR1_RX<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow =DJ_MOTOR2_RX << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =DJ_MOTOR3_RX << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =DJ_MOTOR4_RX << 5;
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
@@ -55,15 +61,15 @@ void CAN2_Configuration()
 	CAN_FilterInitStructure.CAN_FilterNumber = 15;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =0X205<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow =0X206 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X207 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0X208 << 5;
+	CAN_FilterInitStructure.CAN_FilterIdHigh =DJ_MOTOR5_RX<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow =DJ_MOTOR6_RX << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =DJ_MOTOR7_RX << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =DJ_MOTOR8_RX << 5;
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
 	
-	//elmo过滤器
+	//ELMO过滤器
 	CAN_FilterInitStructure.CAN_FilterNumber = 16;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
@@ -85,9 +91,31 @@ void CAN2_Configuration()
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO1;
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
+		
+	CAN_FilterInitStructure.CAN_FilterNumber = 18;
+	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
+	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+	CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor1_error<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = Elmo_Motor2_error<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =Elmo_Motor3_error << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =Elmo_Motor4_error << 5;
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO1;
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+	CAN_FilterInit(&CAN_FilterInitStructure);
+		
+	CAN_FilterInitStructure.CAN_FilterNumber = 19;
+	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
+	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+	CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor5_error<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = Elmo_Motor6_error<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =Elmo_Motor7_error << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =Elmo_Motor8_error << 5;
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO1;
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+	CAN_FilterInit(&CAN_FilterInitStructure);
 	
 	//VESC过滤器
-	CAN_FilterInitStructure.CAN_FilterNumber = 18;
+	CAN_FilterInitStructure.CAN_FilterNumber = 20;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
 	CAN_FilterInitStructure.CAN_FilterIdHigh =((((uint32_t)CAN_PACKET_STATUS << 8)<<3)&0xffff0000)>>16;
@@ -101,7 +129,9 @@ void CAN2_Configuration()
 #ifdef USE_DJ
 	CAN_ITConfig(CAN2,CAN_IT_FMP0, ENABLE);
 #endif
+#if defined USE_ELMO | defined VESC
 	CAN_ITConfig(CAN2,CAN_IT_FMP1, ENABLE);
+#endif
 }
 
 /*
@@ -158,7 +188,7 @@ void CAN2_RX1_IRQHandler(void)
     CAN_ClearITPendingBit(CAN2, CAN_IT_FMP1);
     CAN_ClearFlag(CAN2, CAN_IT_FMP1);
 #ifdef USE_ELMO
-	if((rx_message.IDE == CAN_ID_STD)&&(rx_message.RTR == CAN_RTR_Data))//ELMO报文处理
+	if(((rx_message.StdId >= 0x281) && (rx_message.StdId <= 0x288))&&(rx_message.RTR == CAN_RTR_Data))//ELMO报文处理
 	{
 		u8 id = rx_message.StdId-0x281;
 		if(	(rx_message.Data[0]=='A'&&rx_message.Data[1]=='C'&&(rx_message.Data[3]&BIT6)!=1)|
@@ -178,11 +208,12 @@ void CAN2_RX1_IRQHandler(void)
 		if(rx_message.Data[0]=='V'&&rx_message.Data[1]=='X'&&(rx_message.Data[3]&BIT6)!=1)
 		{
 			DecodeS32Data(&ELMOmotor[id].valReal.speed,&rx_message.Data[4]);
-			ELMOmotor[id].valReal.speed/=ELMOmotor[id].intrinsic.PULSE/15;;
+			ELMOmotor[id].valReal.speed/=ELMOmotor[id].intrinsic.PULSE/15;
 		}
 		if(rx_message.Data[0]=='P'&&rx_message.Data[1]=='X'&&(rx_message.Data[3]&BIT6)!=1)
 		{
 			DecodeS32Data(&ELMOmotor[id].valReal.pulse,&rx_message.Data[4]);
+      ELMOmotor[id].valReal.angle=ELMOmotor[id].valReal.pulse*360/16384/ELMOmotor[id].intrinsic.RATIO;
 		}
 		if(rx_message.Data[0]=='I'&&rx_message.Data[1]=='Q'&&(rx_message.Data[3]&BIT6)!=1)
 		{
@@ -194,6 +225,12 @@ void CAN2_RX1_IRQHandler(void)
 		if(ELMOmotor[id].argum.timeoutCnt>10) ELMOmotor[id].status.timeout=true; else ELMOmotor[id].status.timeout=false;
 		ELMOmotor[id].argum.lastRxTim=OSTimeGet();
 	}
+	if(((rx_message.StdId >= 0x81) && (rx_message.StdId <= 0x88))&&(rx_message.RTR == CAN_RTR_Data))//ELMO错误反馈
+  {
+    u8 id = rx_message.StdId-0x81;
+    id = id;
+    flag.led=error;
+  }
 #endif
 #ifdef USE_VESC
 	if((rx_message.IDE == CAN_ID_EXT)&&(rx_message.RTR == CAN_RTR_Data))//VESC报文处理
@@ -229,8 +266,7 @@ void currentInput(u8 id)
 	u8 temp=2*(id&0x0B);
 	EncodeS16Data(&motor[id].valueSet.current,&DJ_tx_message.Data[temp]);
 	ChangeData(&DJ_tx_message.Data[temp],&DJ_tx_message.Data[temp+1]);
-	if((id==3)||(id==7))
-    CAN_Transmit(CAN2, &DJ_tx_message);
+	if((id==3)||(id==7)) CAN_Transmit(CAN2, &DJ_tx_message);
 }
 
 /****电磁阀控制****/

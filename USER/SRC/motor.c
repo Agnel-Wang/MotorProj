@@ -16,10 +16,10 @@ void Motor_Init(void)
     {//电机限制保护设置
       #ifdef SteeringMotor
         Motorlimit.isPosLimitON=true;
-        Motorlimit.maxAngle= 187*GearRatio;//轮毂最多选择±0.5圈多一丢丢
+        Motorlimit.maxAngle= 187*GearRatio;//轮毂最多旋转±0.5圈多一丢丢
       #else
         Motorlimit.isPosLimitON=false;
-        Motorlimit.maxAngle= 500;//轮毂最多选择±0.5圈多一丢丢
+        Motorlimit.maxAngle= 500;//轮毂最多旋转±0.5圈多一丢丢
       #endif
         Motorlimit.isPosSPLimitOn=true;
         Motorlimit.posSPlimit=1000;
