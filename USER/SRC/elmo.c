@@ -9,19 +9,19 @@ ELMO_Motor ELMOmotor[5];
 void ELMO_Motor_Init(void)
 {
 	{//电机内参
-		Flat90.PULSE=4096;		Flat90.RATIO=1;
-		U10.PULSE=4096;			U10.RATIO=1;
-    EC_4P_22.PULSE=4096;  EC_4P_30.RATIO=1;
-		EC_4P_30.PULSE=4096;	EC_4P_30.RATIO=1;
+		Flat90.PULSE=16384;		Flat90.RATIO=1;
+		U10.PULSE=16384*2;		U10.RATIO=1;
+    	EC_4P_22.PULSE=4000;  	EC_4P_22.RATIO=3.7f;//MAXON Gear 166930
+		EC_4P_30.PULSE=4000;	EC_4P_30.RATIO=169.f/9;
 	}
 	{//电机限制保护
 		ELMOlimit.isPosLimitON=false;
 		ELMOlimit.maxAngle=720.f;
-		ELMOlimit.isPosSPLimitOn=true;
+		ELMOlimit.isPosSPLimitOn=false;
 		ELMOlimit.posSPlimit=1000;
-		ELMOlimit.isRealseWhenStuck=true;
+		ELMOlimit.isRealseWhenStuck=false;
 		ELMOlimit.zeroSP=500;
-		ELMOlimit.zeroCurrent=4000;
+		ELMOlimit.zeroCurrent=1000;
 	}
 	{//电机其他参数设置
 		ELMOargum.timeoutTicks = 2000;//2000ms
@@ -34,7 +34,6 @@ void ELMO_Motor_Init(void)
     ELMOmotor[0].valSet.angle=300;
     ELMOmotor[0].valSet.speed=100;
     ELMOmotor[0].valSet.current=100;
-    ELMOmotor[0].valSet.pulse=0;
 
 	/****1号电机初始化****/
 	ELMOmotor[1].intrinsic=Flat90;
@@ -43,7 +42,6 @@ void ELMO_Motor_Init(void)
     ELMOmotor[1].valSet.angle=300;
     ELMOmotor[1].valSet.speed=100;
     ELMOmotor[1].valSet.current=100;
-    ELMOmotor[1].valSet.pulse=0;
 
 	/****2号电机初始化****/
 	ELMOmotor[2].intrinsic=Flat90;
@@ -52,7 +50,6 @@ void ELMO_Motor_Init(void)
     ELMOmotor[2].valSet.angle=300;
     ELMOmotor[2].valSet.speed=100;
     ELMOmotor[2].valSet.current=100;
-    ELMOmotor[2].valSet.pulse=0;
 
 	/****3号电机初始化****/
 	ELMOmotor[3].intrinsic=Flat90;
@@ -61,45 +58,54 @@ void ELMO_Motor_Init(void)
     ELMOmotor[3].valSet.angle=300;
     ELMOmotor[3].valSet.speed=100;
     ELMOmotor[3].valSet.current=100;
-    ELMOmotor[3].valSet.pulse=0;
 #elif defined ActionMotor
 	#ifdef PassRobot
-
-	#elif defined TryRobot
 	/****0号电机初始化****/
 	ELMOmotor[0].intrinsic=U10;
 	ELMOmotor[0].enable=DISABLE;
 	ELMOmotor[0].mode=position;
-    ELMOmotor[0].valSet.angle=300;
-    ELMOmotor[0].valSet.speed=100;
+    ELMOmotor[0].valSet.angle=360;
+    ELMOmotor[0].valSet.speed=4500;
     ELMOmotor[0].valSet.current=100;
-    ELMOmotor[0].valSet.pulse=0;
 
 	/****1号电机初始化****/
 	ELMOmotor[1].intrinsic=U10;
 	ELMOmotor[1].enable=DISABLE;
 	ELMOmotor[1].mode=position;
-    ELMOmotor[1].valSet.angle=300;
-    ELMOmotor[1].valSet.speed=100;
+    ELMOmotor[1].valSet.angle=360;
+    ELMOmotor[1].valSet.speed=4500;
     ELMOmotor[1].valSet.current=100;
-    ELMOmotor[1].valSet.pulse=0;
 	
 	/****2号电机初始化****/
 	ELMOmotor[2].intrinsic=U10;
 	ELMOmotor[2].enable=DISABLE;
 	ELMOmotor[2].mode=position;
-    ELMOmotor[2].valSet.angle=300;
-    ELMOmotor[2].valSet.speed=100;
+    ELMOmotor[2].valSet.angle=360;
+    ELMOmotor[2].valSet.speed=3000;
     ELMOmotor[2].valSet.current=100;
-    ELMOmotor[2].valSet.pulse=0;
+	#elif defined TryRobot
+	/****0号电机初始化****/
+	ELMOmotor[0].intrinsic=EC_4P_30;
+	ELMOmotor[0].enable=DISABLE;
+	ELMOmotor[0].mode=position;
+    ELMOmotor[0].valSet.angle=360;
+    ELMOmotor[0].valSet.speed=4500;
+    ELMOmotor[0].valSet.current=100;
+
+	/****1号电机初始化****/
+	ELMOmotor[1].intrinsic=EC_4P_30;
+	ELMOmotor[1].enable=DISABLE;
+	ELMOmotor[1].mode=position;
+    ELMOmotor[1].valSet.angle=360;
+    ELMOmotor[1].valSet.speed=4500;
+    ELMOmotor[1].valSet.current=100;
 	#endif
 #endif
 	for(int i=0;i<5;i++)
 	{
 		ELMOmotor[i].limit=ELMOlimit;
 		ELMOmotor[i].argum=ELMOargum;
-	}
-
+  }
 }
 
 /*ELMO初始化*/
@@ -250,7 +256,7 @@ void JV(u32 ID,u8 cmd,...)
 		else if(cmd==SetData)
 		{
 			s32 data_set;
-			data_set=data*ELMOmotor[ID].intrinsic.PULSE/60;
+      data_set=data*ELMOmotor[ID-1].intrinsic.PULSE/60;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].DLC=0x08;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[0]='J';
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[1]='V';
@@ -308,7 +314,7 @@ void MO(u32 ID,u8 cmd,...)
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[0]='M';
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[1]='O';
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[2]=0;
-			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[3]=0x00;
+			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[3]=0x40;
 		}
 		else if(cmd==SetData)
 		{
@@ -383,12 +389,14 @@ void PA(u32 ID,u8 cmd,...)
 		}
 		else if(cmd==SetData)
 		{
+      s32 data_set;
+      data_set=data*ELMOmotor[ID-1].intrinsic.PULSE*(ELMOmotor[ID-1].intrinsic.RATIO/360.f);
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].DLC=0x08;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[0]='P';
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[1]='A';
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[2]=0;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[3]=0;
-			EncodeS32Data(&data,&Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[4]);
+			EncodeS32Data(&data_set,&Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[4]);
 		}
 		Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].InConGrpFlag=InConGrpFlag;
 	}
@@ -467,7 +475,7 @@ void PX(u32 ID,u8 cmd,...)
 		{
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].DLC=0x08;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[0]='P';
-			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[1]='A';
+			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[1]='X';
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[2]=0;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[3]=0;
 			EncodeS32Data(&data,&Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[4]);
@@ -545,12 +553,14 @@ void SP(u32 ID,u8 cmd,...)
 		}
 		if(cmd==SetData)
 		{
+      s32 data_set;
+      data_set=data*ELMOmotor[ID-1].intrinsic.PULSE/60;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].DLC=0x08;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[0]='S';
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[1]='P';
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[2]=0;
 			Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[3]=0;
-			EncodeS32Data(&data,&Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[4]);
+			EncodeS32Data(&data_set,&Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[4]);
 		}
 		Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].InConGrpFlag=InConGrpFlag;
 	}

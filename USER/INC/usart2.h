@@ -6,8 +6,8 @@
 #include "stdio.h"
 #include "string.h"
 #include "param.h"
-#include "stm32f4xx_dma.h"
 #include "stm32f4xx_usart.h"
+#include "epos.h"
 
 void USART2_Configuration(void);
 void UsartLCDshow(void);

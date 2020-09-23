@@ -1,6 +1,7 @@
 #ifndef _TIM2_H
 #define _TIM2_H
 
+#include "epos.h"
 #include "elmo.h"
 #include "sys.h"
 #include "param.h"

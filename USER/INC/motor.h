@@ -18,7 +18,7 @@
 #define DJ_MOTOR8_RX 0x208
 
 /****电机模式****/
-enum MOTOR_MODE { duty, current, RPM, brake, zero, position, handbrake};
+enum MOTOR_MODE { duty=0, current, RPM, brake, zero, position, handbrake};
 
 /****电机限制保护结构体****/
 typedef struct{
@@ -27,7 +27,7 @@ typedef struct{
     bool isPosSPLimitOn;//是否对位置模式进行限速
     u16 posSPlimit;//位置模式下的速度限制
     bool isRealseWhenStuck;//是否堵转时释放电机
-    u16 zeroSP;//寻零模式下的速度
+    s16 zeroSP;//寻零模式下的速度
     u16 zeroCurrent;//寻零模式下的最大电流
 }MotorLimit;
 
@@ -36,6 +36,7 @@ typedef struct{
     u16 PULSE;//编码器线数
     u8  RATIO;//减速比
     u16 CURRENT_LIMIT;//最大输出电流限制
+    u8  GEARRATIO;//外部齿轮减速比
 }MotorParam;
 
 /****电机外参****/

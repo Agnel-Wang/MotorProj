@@ -46,7 +46,6 @@ typedef struct{
   vs16 angle;//轴前角度
   vs16 current;//电流
   vs32 speed;//速度（rpm, 后面计算时转换为JV值与SP值）
-  vs32 pulse;//累计脉冲
 }ELMOValue;
 
 /****电机状态****/

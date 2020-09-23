@@ -7,13 +7,11 @@
  /**
  * @description: set specific rotor to control for code selecting
  */
-//#define PassRobot
-#define TryRobot
+#define PassRobot
+//#define TryRobot
 //#define SteeringMotor
-#define ActionMotor
-
-//USE_SCOPE      是否调用示波器
-
+#define ActionMotor 
+//#define ALT_PUTBALL
 /* selet progrom functional unit
  * VER						流程号是否开启
  * USE_VECS					是否使用VESC
@@ -22,14 +20,24 @@
  */
 #ifdef PassRobot
 	#ifdef SteeringMotor
-		#define USE_ELMO
+		//#define USE_ELMO
+    //#define USE_EPOS
 		#define USE_DJ
+    
+    #define backPos 1000  //下压时降低速度的位置
 	#elif defined ActionMotor
-
+      #define preparePOS 100
+    #ifdef ALT_PUTBALL
+      #define USE_DJ
+    #else
+      //#define USE_ELMO
+      #define USE_EPOS
+    #endif
 	#endif
 #elif defined TryRobot
 	#ifdef SteeringMotor
-		//nothing
+		#define USE_DJ
+    #define USE_ELMO
 	#elif defined ActionMotor
 		#define USE_ELMO
 	#endif
@@ -38,23 +46,24 @@
 #ifdef SteeringMotor
 		#define BROADCAST_ID 0x00010000
 	#ifdef PassRobot
-		#define MOTOR_0_3 0x305
-		#define MOTOR_1_2 0x306
-		#define ID_SELF MOTOR_0_3
-		#define GearRatio (104.0f/17.0f)
+		#define MOTOR_0_3 1
+		#define MOTOR_1_2 2
+    #define MOROE_4_and_2 3
+		#define ID_SELF MOROE_4_and_2
+		//#define GearRatio (104.0f/17.0f)
+    #define GearRatio (78.0f/17.0f)   //P车， 实际上是T车， EC-4P-30
 	#elif defined TryRobot
-
+		#define MOTOR_all 0
+    #define ID_SELF MOTOR_all
 	#endif
 #elif defined ActionMotor
 		#define ID_SELF 0x00010300
 		#define ID_BACK 0x00030101
 		#define BROADCAST_ID 0x00010000
 	#ifdef PassRobot
-		#define Motor_Rotate_PR 0//转向电机编号
-		#define Motor_Pitch 1//俯仰电机编号
-		#define Motor_Capture 2//手爪电机编号
+  
 	#elif defined TryRobot
-
+  
 	#endif
 #endif
 
@@ -73,8 +82,9 @@
 
 /* math function */
 #define ABS(x)  ((x)>0? (x):(-(x)))
-#define SIG(x)  ((x)>=0? 1:-1)
+#define SIG(x)  ((x < 0) ? -1 : 1)
 #define PEAK(A,B)   if(ABS(A)>B) A=SIG(A)*B; //此处默认B为正值
+#define SQ(x)	((x)*(x))
 
 #define EncodeS32Data(f,buff)	{*(s32*)buff = *f;}
 #define DecodeS32Data(f,buff)	{*f = *(s32 *)buff;}

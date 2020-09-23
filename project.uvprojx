@@ -382,9 +382,9 @@
           <GroupName>USER</GroupName>
           <Files>
             <File>
-              <FileName>beep.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\USER\SRC\beep.c</FilePath>
+              <FilePath>.\USER\SRC\main.c</FilePath>
             </File>
             <File>
               <FileName>can1.c</FileName>
@@ -392,39 +392,39 @@
               <FilePath>.\USER\SRC\can1.c</FilePath>
             </File>
             <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\SRC\delay.c</FilePath>
-            </File>
-            <File>
               <FileName>can2.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\SRC\can2.c</FilePath>
             </File>
             <File>
-              <FileName>led8.c</FileName>
+              <FileName>tim2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\USER\SRC\led8.c</FilePath>
-            </File>
-            <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\SRC\led.c</FilePath>
-            </File>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\SRC\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>param.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\SRC\param.c</FilePath>
+              <FilePath>.\USER\SRC\tim2.c</FilePath>
             </File>
             <File>
               <FileName>tim3.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\SRC\tim3.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>elmo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\elmo.c</FilePath>
+            </File>
+            <File>
+              <FileName>vesc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\vesc.c</FilePath>
+            </File>
+            <File>
+              <FileName>param.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\param.c</FilePath>
             </File>
             <File>
               <FileName>usart1.c</FileName>
@@ -437,29 +437,9 @@
               <FilePath>.\USER\SRC\usart2.c</FilePath>
             </File>
             <File>
-              <FileName>motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\SRC\motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>buffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\SRC\buffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\SRC\key.c</FilePath>
-            </File>
-            <File>
               <FileName>queue.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\SRC\queue.c</FilePath>
-            </File>
-            <File>
-              <FileName>vesc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\USER\SRC\vesc.c</FilePath>
             </File>
             <File>
               <FileName>canctrllist.c</FileName>
@@ -472,14 +452,49 @@
               <FilePath>.\USER\SRC\pid.c</FilePath>
             </File>
             <File>
-              <FileName>elmo.c</FileName>
+              <FileName>buffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\USER\SRC\elmo.c</FilePath>
+              <FilePath>.\USER\SRC\buffer.c</FilePath>
             </File>
             <File>
-              <FileName>tim2.c</FileName>
+              <FileName>delay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\USER\SRC\tim2.c</FilePath>
+              <FilePath>.\USER\SRC\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\key.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>led8.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\led8.c</FilePath>
+            </File>
+            <File>
+              <FileName>beep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\beep.c</FilePath>
+            </File>
+            <File>
+              <FileName>common_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\common_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>epos.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\epos.c</FilePath>
+            </File>
+            <File>
+              <FileName>macro.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\USER\INC\macro.h</FilePath>
             </File>
           </Files>
         </Group>

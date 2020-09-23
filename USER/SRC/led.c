@@ -16,3 +16,14 @@ void Led_Show(void)
 	LED_BLUE_OFF;OSTimeDly(2000);
 	LED_GREEN_OFF;OSTimeDly(2000);
 }
+
+void LedDisplay(u8 led, u8 num)
+{
+  for(int i=0; i<num; i++)
+  {
+    GPIOA->BSRRH = led;
+    OSTimeDly(2000);
+    GPIOA->BSRRL = led;
+    OSTimeDly(2000);
+  }
+}

@@ -39,12 +39,7 @@ void Can_DeQueue(CAN_TypeDef* CANx , Can_QueueTypeDef *can_queue)
 		flag.CanSendqueueEMPTY=1;
 	else
 	{
-		if((can_queue->Can_DataSend[can_queue->Front].Data[0]=='B')&&(can_queue->Can_DataSend[can_queue->Front].Data[1]=='G'))
-		{
-			can_queue->Front=(can_queue->Front+1)%CAN_QUEUESIZE;
-			return;
-		}
-		if(can_queue->Can_DataSend[can_queue->Front].ID<0x400)
+		if(can_queue->Can_DataSend[can_queue->Front].ID<0x800)
 		{
 			TxMessage.IDE=CAN_ID_STD;
 			TxMessage.StdId=can_queue->Can_DataSend[can_queue->Front].ID;
@@ -81,12 +76,12 @@ void Can_DeQueue(CAN_TypeDef* CANx , Can_QueueTypeDef *can_queue)
 		}
 		if(Can1_Tx_NoMailBox>=5)
 		{
-			flag.led=error;
 			Can1_Tx_NoMailBox=0;
+      insertError(error.head, SYSTEMERROR|(1<<4)|(1<<8));
 		}
 		if(Can2_Tx_NoMailBox>=5)
 		{
-			flag.led=error;
 			Can2_Tx_NoMailBox=0;
+      insertError(error.head, SYSTEMERROR|(2<<4)|(1<<8));
 		}}
 }

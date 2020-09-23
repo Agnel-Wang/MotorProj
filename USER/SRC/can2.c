@@ -129,7 +129,7 @@ void CAN2_Configuration()
 #ifdef USE_DJ
 	CAN_ITConfig(CAN2,CAN_IT_FMP0, ENABLE);
 #endif
-#if defined USE_ELMO | defined VESC
+#if defined USE_ELMO | defined USE_VESC | defined USE_EPOS
 	CAN_ITConfig(CAN2,CAN_IT_FMP1, ENABLE);
 #endif
 }
@@ -148,21 +148,14 @@ void CAN2_RX0_IRQHandler(void)
     if ((rx_message.StdId >= 0x201) && (rx_message.StdId <= 0x208) && (rx_message.RTR == CAN_RTR_Data)) //DJ电机报文处理
     {
         u8 id = rx_message.StdId - 0x201;
-		ChangeData(&rx_message.Data[0],&rx_message.Data[1]);
-		ChangeData(&rx_message.Data[2],&rx_message.Data[3]);
-		ChangeData(&rx_message.Data[4],&rx_message.Data[5]);
-		DecodeS16Data(&motor[id].valueReal.pulseRead,&rx_message.Data[0]);
-		DecodeS16Data(&motor[id].valueReal.speed,&rx_message.Data[2]);
-		DecodeS16Data(&motor[id].valueReal.current,&rx_message.Data[4]);
+        ChangeData(&rx_message.Data[0],&rx_message.Data[1]);
+        ChangeData(&rx_message.Data[2],&rx_message.Data[3]);
+        ChangeData(&rx_message.Data[4],&rx_message.Data[5]);
+        DecodeS16Data(&motor[id].valueReal.pulseRead,&rx_message.Data[0]);
+        DecodeS16Data(&motor[id].valueReal.speed,&rx_message.Data[2]);
+        DecodeS16Data(&motor[id].valueReal.current,&rx_message.Data[4]);
         motor[id].valueReal.angle=motor[id].valueReal.pulse*360.f/motor[id].intrinsic.RATIO/motor[id].intrinsic.PULSE;
-		/* 反馈超时判断 */
-		if((motor[id].enable)&&(OSTimeGet()-motor[id].argum.lastRxTim)>motor[id].argum.timeoutTicks)
-		{
-			if(++motor[id].argum.timeoutCnt>10) {motor[id].status.timeout=true; motor[id].argum.timeoutCnt=0;}
-			else motor[id].status.timeout=false;
-		}
-		else motor[id].argum.timeoutCnt=0;
-		motor[id].argum.lastRxTim=OSTimeGet();
+        motor[id].argum.lastRxTim=OSTimeGet();
     }
   }
 }
@@ -191,6 +184,7 @@ void CAN2_RX1_IRQHandler(void)
 	if(((rx_message.StdId >= 0x281) && (rx_message.StdId <= 0x288))&&(rx_message.RTR == CAN_RTR_Data))//ELMO报文处理
 	{
 		u8 id = rx_message.StdId-0x281;
+    	ELMOmotor[id].argum.lastRxTim=OSTimeGet();
 		if(	(rx_message.Data[0]=='A'&&rx_message.Data[1]=='C'&&(rx_message.Data[3]&BIT6)!=1)|
 			(rx_message.Data[0]=='B'&&rx_message.Data[1]=='G'&&(rx_message.Data[3]&BIT6)!=1)|
 			(rx_message.Data[0]=='J'&&rx_message.Data[1]=='V'&&(rx_message.Data[3]&BIT6)!=1)|
@@ -208,28 +202,24 @@ void CAN2_RX1_IRQHandler(void)
 		if(rx_message.Data[0]=='V'&&rx_message.Data[1]=='X'&&(rx_message.Data[3]&BIT6)!=1)
 		{
 			DecodeS32Data(&ELMOmotor[id].valReal.speed,&rx_message.Data[4]);
-			ELMOmotor[id].valReal.speed/=ELMOmotor[id].intrinsic.PULSE/15;
+			ELMOmotor[id].valReal.speed/=ELMOmotor[id].intrinsic.PULSE/60;
 		}
 		if(rx_message.Data[0]=='P'&&rx_message.Data[1]=='X'&&(rx_message.Data[3]&BIT6)!=1)
 		{
-			DecodeS32Data(&ELMOmotor[id].valReal.pulse,&rx_message.Data[4]);
-      ELMOmotor[id].valReal.angle=ELMOmotor[id].valReal.pulse*360/16384/ELMOmotor[id].intrinsic.RATIO;
+      s32 pulse;
+			DecodeS32Data(&pulse,&rx_message.Data[4]);
+      ELMOmotor[id].valReal.angle=pulse*(360.f/ELMOmotor[id].intrinsic.RATIO)/ELMOmotor[id].intrinsic.PULSE;
 		}
 		if(rx_message.Data[0]=='I'&&rx_message.Data[1]=='Q'&&(rx_message.Data[3]&BIT6)!=1)
 		{
 			DecodeS32Data(&ELMOmotor[id].valReal.current,&rx_message.Data[4]);
 		}
-		/* 反馈超时判断 */
-		if(ELMOmotor[id].enable&&((OSTimeGet()-ELMOmotor[id].argum.lastRxTim)>ELMOmotor[id].argum.timeoutTicks)) ELMOmotor[id].argum.timeoutCnt++;//反馈超时判断
-		else ELMOmotor[id].argum.timeoutCnt=0;
-		if(ELMOmotor[id].argum.timeoutCnt>10) ELMOmotor[id].status.timeout=true; else ELMOmotor[id].status.timeout=false;
 		ELMOmotor[id].argum.lastRxTim=OSTimeGet();
 	}
 	if(((rx_message.StdId >= 0x81) && (rx_message.StdId <= 0x88))&&(rx_message.RTR == CAN_RTR_Data))//ELMO错误反馈
   {
     u8 id = rx_message.StdId-0x81;
-    id = id;
-    flag.led=error;
+    insertError(error.head, ELMOERROR|((id+1)<<4)|EMERGENCY);
   }
 #endif
 #ifdef USE_VESC
@@ -238,16 +228,12 @@ void CAN2_RX1_IRQHandler(void)
 		u8 ind=0;
 		if((rx_message.ExtId>>8)==CAN_PACKET_STATUS)
 		{
-			VESCmotor[rx_message.ExtId&0xff].valReal.speed=(s32)(buffer_32_to_float(rx_message.Data,1e0,&ind)/VESCmotor[rx_message.ExtId&0xff].instrinsic.POLE_PAIRS);
-			VESCmotor[rx_message.ExtId&0xff].valReal.current=buffer_16_to_float(rx_message.Data,1e1,&ind);
-			VESCmotor[rx_message.ExtId&0xff].valReal.duty=buffer_16_to_float(rx_message.Data,1e3,&ind);	
+			VESCmotor[rx_message.ExtId&0xff-1].valReal.speed=(s32)(buffer_32_to_float(rx_message.Data,1e0,&ind)/VESCmotor[rx_message.ExtId&0xff].instrinsic.POLE_PAIRS);
+			VESCmotor[rx_message.ExtId&0xff-1].valReal.current=buffer_16_to_float(rx_message.Data,1e1,&ind);
+			VESCmotor[rx_message.ExtId&0xff-1].valReal.duty=buffer_16_to_float(rx_message.Data,1e3,&ind);	
 		}
 	}
-	/* 反馈超时判断 */
-	if(VESCmotor[id].enable&&((OSTimeGet()-VESCmotor[id].argum.lastRxTim)>VESCmotor[id].argum.timeoutTicks)) VESCmotor[id].argum.timeoutCnt++;//反馈超时判断
-	else VESCmotor[id].argum.timeoutCnt=0;
-	if(VESCmotor[id].argum.timeoutCnt>10) VESCmotor[id].status.timeout=true; else VESCmotor[id].status.timeout=false;
-	VESCmotor[id].argum.lastRxTim=OSTimeGet();
+	VESCmotor[rx_message.ExtId&0xff-1].argum.lastRxTim=OSTimeGet();
 #endif
   }
 }

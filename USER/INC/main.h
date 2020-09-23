@@ -9,9 +9,11 @@
 #include "usart1.h"
 #include "usart2.h"
 #include "tim3.h"
+#include "tim2.h"
 #include "can1.h"
 #include "visual_scope.h"
 #include "key.h"
+#include "common_can.h"
 
 /****UCOSII任务设置****/
 //START任务
@@ -37,12 +39,6 @@ static void Task_Flag(void *pdata);
 #define MOTOR_STK_SIZE		    1024
 __align(8) OS_STK MOTOR_TASK_STK[MOTOR_STK_SIZE];
 static void Task_Motor(void *pdata);
-
-//ELMO查询任务
-#define ELMO_TASK_PRIO			50
-#define ELMO_STK_SIZE			128
-__align(8) OS_STK ELMO_TASK_STK[ELMO_STK_SIZE];
-static void Task_Elmo(void *pdata);
 
 //虚拟示波器
 #define SCOPE_TASK_PRIO			55

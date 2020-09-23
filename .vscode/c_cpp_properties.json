@@ -3,19 +3,19 @@
         {
             "name": "Target 1",
             "includePath": [
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\GeneralFunction\\inc",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\Libraries\\CMSIS",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\Libraries\\Startup",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\Libraries\\STM32F4xx_StdPeriph_Driver\\inc",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\uCOSII\\CONFIG",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\uCOSII\\CORE",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\uCOSII\\PORT",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\USER\\INC",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\GeneralFunction\\inc",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\Libraries\\CMSIS",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\Libraries\\Startup",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\Libraries\\STM32F4xx_StdPeriph_Driver\\inc",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\uCOSII\\CONFIG",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\uCOSII\\CORE",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\uCOSII\\PORT",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\USER\\INC",
                 "C:\\Keil_v5\\ARM\\ARMCC\\include",
                 "C:\\Keil_v5\\ARM\\ARMCC\\include\\rw",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\USER\\SRC",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\GeneralFunction\\src",
-                "c:\\Users\\22734\\Desktop\\STM program\\Motor\\MotorProj\\Libraries\\STM32F4xx_StdPeriph_Driver\\src"
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\USER\\SRC",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\GeneralFunction\\src",
+                "c:\\Users\\22734\\Desktop\\Motor\\MotorProj\\Libraries\\STM32F4xx_StdPeriph_Driver\\src"
             ],
             "defines": [
                 "USE_STDPERIPH_DRIVER",

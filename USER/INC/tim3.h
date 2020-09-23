@@ -5,6 +5,7 @@
 #include "param.h"
 #include "canctrllist.h"
 #include "can2.h"
+#include "epos.h"
 
 void TIM3_Configuration(void);
 

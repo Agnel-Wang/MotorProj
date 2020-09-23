@@ -50,22 +50,69 @@ void CAN1_Configuration(void)
   CAN_FilterInitStructure.CAN_FilterIdLow =0X307 << 5;
   CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0x320 << 5;
   CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x309 << 5;
+  #elif ID_SELF == MOTOR_all
+	CAN_FilterInitStructure.CAN_FilterIdHigh =0X305<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = 0X306<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X307 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0X320 << 5;
+  #elif ID_SELF == MOROE_4_and_2
+	CAN_FilterInitStructure.CAN_FilterIdHigh =0X305<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = 0X306<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X307 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0X308 << 5;
   #endif
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
 
+  #if ID_SELF == MOROE_4_and_2
+  CAN_FilterInitStructure.CAN_FilterNumber = 3;
+	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
+	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+  CAN_FilterInitStructure.CAN_FilterIdHigh =0X320<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = 0X301<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X302 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x303<< 5;
+  CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
+  CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+  CAN_FilterInit(&CAN_FilterInitStructure);
+  #endif
+  
   #if ID_SELF == MOTOR_0_3
+  #ifdef USE_ELMO
 	CAN_FilterInitStructure.CAN_FilterNumber = 1;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =0x281<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = 0x282<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0x283 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x284 << 5;
+	CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor1_RX<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = Elmo_Motor2_RX<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =Elmo_Motor3_RX << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =Elmo_Motor4_RX << 5;
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
+  #elif defined USE_EPOS
+	CAN_FilterInitStructure.CAN_FilterNumber = 1;
+	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
+	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+	CAN_FilterInitStructure.CAN_FilterIdHigh =EPOS_Motor1_RX<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = EPOS_Motor2_RX<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =EPOS_Motor3_RX << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =EPOS_Motor4_RX << 5;
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+	CAN_FilterInit(&CAN_FilterInitStructure);
+  
+ 	CAN_FilterInitStructure.CAN_FilterNumber = 2;
+	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
+	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+	CAN_FilterInitStructure.CAN_FilterIdHigh =EPOS_Motor1_Init<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = EPOS_Motor2_Init<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =EPOS_Motor3_Init << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =EPOS_Motor4_Init << 5;
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+	CAN_FilterInit(&CAN_FilterInitStructure); 
+  #endif
   #endif
 #endif
 #ifdef ActionMotor
@@ -91,6 +138,7 @@ void CAN1_Configuration(void)
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
 #endif
+
   NVIC_InitStructure.NVIC_IRQChannel = CAN1_RX0_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -125,6 +173,7 @@ static void answer_master(CanRxMsg *rx_message)
   }
 }
 
+#ifdef SteeringMotor
 /****反馈电机角度****/
 static void feedbackAngle(u16 motorID)
 {
@@ -136,31 +185,12 @@ static void feedbackAngle(u16 motorID)
   tx_message.Data[0] = 'B';
   tx_message.Data[1] = 'B';
   tx_message.Data[2] = 'G';
-  #if ID_SELF==MOTOR_0_3
-    if(motorID==0x305)
-    {
-      s16TempData[0]=motor[0].valueReal.angle*30.f/GearRatio;
-      EncodeS16Data(&s16TempData[0], &tx_message.Data[3]);
-    }
-    else if(motorID==0x308)
-    {
-      s16TempData[3]=motor[3].valueReal.angle*30.f/GearRatio;
-      EncodeS16Data(&s16TempData[3], &tx_message.Data[3]);      
-    }
-  #elif ID_SELF==MOTOR_1_2
-    if(motorID==0x306)
-    {
-      s16TempData[1]=motor[1].valueReal.angle*30.f/GearRatio;
-      EncodeS16Data(&s16TempData[1], &tx_message.Data[3]);
-    }
-    else if(motorID==0x307)
-    {
-      s16TempData[2]=motor[2].valueReal.angle*30.f/GearRatio;
-      EncodeS16Data(&s16TempData[2], &tx_message.Data[3]);      
-    }
-  #endif
+  u8 id = motorID - 0x305;
+  s16TempData[id]=motor[id].valueReal.angle*30.f/GearRatio;
+  EncodeS16Data(&s16TempData[id], &tx_message.Data[3]);
   CAN_Transmit(CAN1, &tx_message);
 }
+#endif
 
 void CAN1_RX0_IRQHandler(void) 
 {
@@ -224,17 +254,21 @@ void CAN1_RX0_IRQHandler(void)
           if((rx_message.StdId==0x306)||(rx_message.StdId==0x307))
         #elif ID_SELF==MOTOR_0_3
           if((rx_message.StdId==0x305)||(rx_message.StdId==0x308))
+        #elif ID_SELF==MOTOR_all
+          if((rx_message.StdId==0x305)||(rx_message.StdId==0x306)||(rx_message.StdId==0x307))
+        #elif ID_SELF==MOROE_4_and_2
+          if((rx_message.StdId==0x305)||(rx_message.StdId==0x306)||(rx_message.StdId==0x307)||(rx_message.StdId==0x308))
         #endif
         {
           u8 SteeringID=rx_message.StdId-0x305;
-          if(rx_message.Data[0]=='C'&&rx_message.Data[1]=='W'&&rx_message.Data[2]=='H'&&rx_message.Data[3]=='U')
+          if(rx_message.Data[0]=='C'&&rx_message.Data[1]=='W'&&rx_message.Data[2]=='H'&&rx_message.Data[3]=='U')//自检
           {
             answer_master(&rx_message);
           }
           else if(rx_message.Data[0] == 'C' && rx_message.Data[1] == 'H')//旋转
           {
             DecodeS16Data(&s16TempData[SteeringID],&rx_message.Data[2]);
-            motor[SteeringID].valueSet.angle = s16TempData[SteeringID]/30.f*GearRatio;
+            motor[SteeringID].valueSet.angle = -s16TempData[SteeringID]/30.f*GearRatio;
             motor[SteeringID].begin=true;
           }
           else if(rx_message.Data[0]=='S'&&rx_message.Data[1]=='P')//速度设定
@@ -246,10 +280,7 @@ void CAN1_RX0_IRQHandler(void)
           else if(rx_message.Data[0]=='M'&&rx_message.Data[1]=='O'&&rx_message.Data[2]==1)//电机使能
           {
             motor[SteeringID].mode=position;//位置模式
-            motor[SteeringID].begin=true;//锁当前位置
-            motor[SteeringID].limit.isPosLimitON=true;//开启位置限制保护
-            motor[SteeringID].limit.maxAngle=540.f;//最大轴前旋转角度
-            motor[SteeringID].limit.isPosSPLimitOn=true;//开始位置速度限制保护
+            motor[SteeringID].begin=true;//不锁位置，立即运行
             motor[SteeringID].enable=true;//电机使能
             answer_master(&rx_message);
           }
@@ -271,9 +302,6 @@ void CAN1_RX0_IRQHandler(void)
         }
         if(rx_message.StdId==0x320)
         {
-          //FIXME: 修改此处的begin
-            motor[0].begin=true;motor[1].begin=true;motor[2].begin=true;motor[3].begin=true;
-          /****************/
             DecodeS16Data(&s16TempData[0], &rx_message.Data[0]);
             DecodeS16Data(&s16TempData[1], &rx_message.Data[2]);
             DecodeS16Data(&s16TempData[2], &rx_message.Data[4]);
@@ -288,15 +316,41 @@ void CAN1_RX0_IRQHandler(void)
             motor[0].begin=true;motor[0].mode=position;
             motor[3].valueSet.angle = s16TempData[3]/30.f*GearRatio;
             motor[3].begin=true;motor[3].mode=position;
+          #elif ID_SELF==MOTOR_all
+            motor[0].valueSet.angle = s16TempData[0]/30.f*GearRatio;
+            motor[0].begin=true;motor[0].mode=position;
+            motor[1].valueSet.angle = s16TempData[1]/30.f*GearRatio;
+            motor[1].begin=true;motor[1].mode=position;
+            motor[2].valueSet.angle = s16TempData[2]/30.f*GearRatio;
+            motor[2].begin=true;motor[2].mode=position;
+          #elif ID_SELF==MOROE_4_and_2
+            motor[0].valueSet.angle = -s16TempData[0]/30.f*GearRatio;
+            motor[0].begin=true;motor[0].mode=position;
+            motor[1].valueSet.angle = -s16TempData[1]/30.f*GearRatio;
+            motor[1].begin=true;motor[1].mode=position;
+            motor[2].valueSet.angle = -s16TempData[2]/30.f*GearRatio;
+            motor[2].begin=true;motor[2].mode=position;
+            motor[3].valueSet.angle = s16TempData[2]/30.f*GearRatio;
+            motor[3].begin=true;motor[3].mode=position;
           #endif
             answer_master(&rx_message);
         }
-        #if ID_SELF==MOTOR_0_3
-          if((rx_message.StdId==Elmo_Motor1_RX)||(rx_message.StdId==Elmo_Motor2_RX)||(rx_message.StdId==Elmo_Motor3_RX)||(rx_message.StdId==Elmo_Motor4_RX))
-          {
-            u8 ElmoID=rx_message.StdId-0x281;
-            ELMOmotor[ElmoID].enable=1;
-          }
+        #if ID_SELF==MOTOR_0_3 | ID_SELF==MOTOR_all
+          #ifdef USE_ELMO
+            if((rx_message.StdId==Elmo_Motor1_RX)||(rx_message.StdId==Elmo_Motor2_RX)||(rx_message.StdId==Elmo_Motor3_RX)||(rx_message.StdId==Elmo_Motor4_RX))
+            {
+              if((rx_message.Data[0]=='M'&&rx_message.Data[1]=='O'&&(rx_message.Data[3]&BIT6)!=1))
+              {
+                u8 ElmoID=rx_message.StdId-0x281;
+                ELMOmotor[ElmoID].enable=1;
+              }
+            }
+          #elif defined USE_EPOS
+            if((rx_message.StdId==Elmo_Motor1_RX)||(rx_message.StdId==Elmo_Motor2_RX)||(rx_message.StdId==Elmo_Motor3_RX)||(rx_message.StdId==Elmo_Motor4_RX))
+            {
+        
+            }
+          #endif
         #endif
       #elif defined TryRobot
 

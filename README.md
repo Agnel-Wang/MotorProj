@@ -1,8 +1,9 @@
-# Author: _Agnel_ &emsp; for Motor Driver
+# Motor firmware
+
+[![Agnel: Motor Driver](https://img.shields.io/badge/Agnel-motor%20driver-blue)](http://www.github.com/Agnel-Wang/MotorProj)
 
 ## 待做
 
-+ 更改串口屏程序
 + 电磁阀舵机程序
 + CAN1也加入报文列表
 
@@ -23,6 +24,7 @@
 + DJ电机开始位置记录因为在`pulse_caculate()`函数里面开始distance会先运行一次才会在对`valuePrv`进行赋值，所以会有`0~8192`的脉冲误差
 + 注意DJ电机回去其报文以及反馈的时候需要进行一次`ChangeData()`
 + motor.status.overspeed暂时没用
++ 将电机使能放在了start里面以达成延时使能的要求从而避免初始位置误差  
 
 ### ELMO相关事项
 
@@ -32,11 +34,12 @@
 + 关于ElmoCANopen协议详见文档9.1.1.1
 + 动作执行放在了TIM2里面，严格定时
 + enable只是一个状态
++ intrinsic.PULSE直接乘4方便计算
 
 ### VESC相关事项
 
-+ VESC[Github](github.com/vedderb)地址
-+ VESC[论坛](vesc-project.com/vesc_tool)地址
++ VESC [Github](http://github.com/vedderb) 地址
++ VESC [论坛](http://vesc-project.com/vesc_tool) 地址
 + VESC需要定时赋值否则会自动释放
 + VESC暂时只用到了速度模式，所以程序基本没写多少
 
@@ -148,7 +151,19 @@
 
 ### 2020.08.18
 
-1. 好久没用ELMO，自己写的格式都忘了，InConGrpFlag在第三位，记成最后一位了
+1. 好久没用ELMO，自己写的格式都忘了，InConGrpFlag在第三位，记成最后一位了  
+真的好多都没必要，写程序要以简洁明了为出发点，不能为了骚而去用花里胡哨的东西  
+1. 也不知道什么时候我的void Can_DeQueue(CAN_TypeDef*CANx, Can_QueueTypeDef*can_queue)有下面的代码，导致ELMO的BG一直发不出来，现在删了
+
+```C
+
+if((can_queue->Can_DataSend[can_queue->Front].Data[0]=='B')&&(can_queue->Can_DataSend[can_queue->Front].Data[1]=='G'))
+{
+  can_queue->Front=(can_queue->Front+1)%CAN_QUEUESIZE;
+  return;
+}
+
+```
 
 ### 2020.08.13
 

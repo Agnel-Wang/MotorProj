@@ -80,9 +80,9 @@ void TraversalControlList(MesgControlGrpTypeDef* CAN_MesgSentList,Can_QueueTypeD
 				{
 					switch(i)
 					{
-						case 0:flag.led=error;
+						case 0:insertError(error.head, SYSTEMERROR|(1<<4)|(2<<8));
 							break;
-						case 1:flag.led=error;
+						case 1:insertError(error.head, SYSTEMERROR|(1<<4)|(2<<8));
 							break;
 						default:
 							break;
