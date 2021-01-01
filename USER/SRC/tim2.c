@@ -33,8 +33,8 @@ void TIM2_IRQHandler(void)
                     {
                         case current:   VESC_Set_Current(i+1, VESCmotor[i].valSet.current, 0);                                  break;
                         case duty:      VESC_Set_Duty_Cycle(i+1, VESCmotor[i].valSet.duty, 0);                                  break;
-                        case RPM:       VESC_Set_Speed(i+1, VESCmotor[i].valSet.speed * VSCmotor[i].instrinsic.POLE_PAIRS, 0);  break;
-                        case brake:     VESC_Set_Brake_Current(i+1, VESCmotor[id].limit.breakCurrent, 0);                       break;
+                        case RPM:       VESC_Set_Speed(i+1, VESCmotor[i].valSet.speed * VESCmotor[i].instrinsic.POLE_PAIRS, 0);  break;
+                        case brake:     VESC_Set_Brake_Current(i+1, VESCmotor[i].limit.breakCurrent, 0);                       break;
                         default:break;
                     }
                 }
@@ -42,17 +42,17 @@ void TIM2_IRQHandler(void)
             }
             else VESC_Set_Current(i+1,0.0,0);
             /* 反馈超时判断 */
-            if(VESCmotor[id].enable&&((OSTimeGet()-VESCmotor[id].argum.lastRxTim)>VESCmotor[id].argum.timeoutTicks)) VESCmotor[id].argum.timeoutCnt++;
-            else VESCmotor[id].argum.timeoutCnt=0;
-            if(VESCmotor[id].argum.timeoutCnt>10) 
+            if(VESCmotor[i].enable&&((OSTimeGet()-VESCmotor[i].argum.lastRxTim)>VESCmotor[i].argum.timeoutTicks)) VESCmotor[i].argum.timeoutCnt++;
+            else VESCmotor[i].argum.timeoutCnt=0;
+            if(VESCmotor[i].argum.timeoutCnt>10) 
             {
-              VESCmotor[id].status.timeout=true;
-              insertError(error.head, VESCERROR|((id+1)<<4)|TIMEOUT);
+              VESCmotor[i].status.timeout=true;
+              insertError(error.head, VESCERROR|((i+1)<<4)|TIMEOUT);
             }
             else 
             {
-              VESCmotor[id].status.timeout=false;
-              deleteError(error.head, ErrorFind(error.head, VESCERROR|((id+1)<<4)|TIMEOUT));
+              VESCmotor[i].status.timeout=false;
+              deleteError(error.head, ErrorFind(error.head, VESCERROR|((i+1)<<4)|TIMEOUT));
             }
         }
 #endif
@@ -76,8 +76,7 @@ void ElmoAskStatus(void)
   {
     AskTimeCnt=0;
    // VX(0, 0); 
-   // if(kick[0].askbegin|kick[1].askbegin|kick[2].askbegin)
-      PX(0, GetData, 0);
+    PX(0, GetData, 0);
   }
   /* 反馈超时判断 */
   for(int id=0;id<4;id++)
@@ -97,110 +96,19 @@ void ElmoAskStatus(void)
   }
 }
 
-uc8 KickTimes=5;//最多踢5次
 /* ELMO执行动作计算 */
 void ElmoAction(void)
 {
-  #ifdef ActionMotor
-#ifdef TryRobot
-  for(int i=0; i<2; i++)
-  {
-    if(kick[i].init)
-    {   
-      kick[i].init=false;
-      kick[i].cnt=0;
-      UM(i+1, SetData, 0, ELMOmotor[i].mode);
-      PX(i+1, SetData, 0, 0);
-      SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
-      kick[i].cnt++;
-      ELMOmotor[i].valSet.angle= kick[i].cnt*360;
-    }
-    if(ELMOmotor[i].enable)
-    {
-      if(ABS(ELMOmotor[i].valReal.angle-ELMOmotor[i].valSet.angle)<10)
-      {
-        if(++kick[i].cnt>KickTimes)
-          kick[i].ok=true;
-        else
-        {
-          ELMOmotor[i].valSet.angle=kick[i].cnt*360;
-          if(kick[i].isAutoKick)
-          {
-            if(kick[i].waitCnt++>kick[i].waittime)
-            {
-              kick[i].waitCnt=0;
-              PA(i+1, SetData, 0, ELMOmotor[i].valSet.angle);
-              BG(i+1, 0);
-            }
-          }
-        }
-      }
-    }
-  }
-#elif defined PassRobot
-  for(int i=0; i<3; i++)
-  {
-    if(kick[i].init)
-    {
-      kick[i].init=false;
-      UM(i+1, SetData, 0, ELMOmotor[i].mode);
-      PX(i+1, SetData, 0, 0);
-      SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
-      ELMOmotor[i].valSet.angle=1440;
-    }
-    if(ELMOmotor[i].enable)
-    {
-      if(kick[i].begin)
-      {
-        if(ABS(ELMOmotor[i].valReal.angle-ELMOmotor[i].valSet.angle)<10)
-        {
-          ELMOmotor[i].valSet.angle+=1440;
-        }
-        PA(i+1, SetData, 0, ELMOmotor[i].valSet.angle);
-        SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
-        BG(i+1, 0);
-        
-        kick[i].begin=false;
-      }
-    }
-  }
-#endif
-#endif
+  
+  
 }
 
-u16 errorcnt=0;
-u16 speed=40;
 void EposAskStatus(void)
 {
-  for(int i=1;i<5;i++)
-  {
-    EPOS_ReadStatusword(i, 0);
-    if(EPOSmotor[i-1].status.statusword==0x0208)
-    {
-      errorcnt++;
-      EPOS_ClearFault(i, 0);
-      EPOS_StartMotor(i, 0);
-    }
-  }
+  
 }
 
 void EposAction()
 {
-  if(AskTimeCnt++>14)
-  {
-    AskTimeCnt=0;
-    if(send_yes)
-    {
-      if(speed<500) speed++;
-      else speed=40;
-    }
-    for(int i=1;i<5;i++)
-    {
-      if(send_yes)
-      {
-        EPOS_SetPVMspeed(i, speed, 0);
-        EPOS_EnableOperation(i, 0);
-      }
-    }
-  }
+  
 }

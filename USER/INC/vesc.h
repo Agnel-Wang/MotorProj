@@ -42,8 +42,9 @@ typedef struct{
 	bool enable;//电机使能
 	bool begin;//电机启动
 	u8 mode;//电机模式
-	VESCVal	valSet,valReal;//外参设定值，实际值
+	VESCVal	valSet,valReal,valPrv;//外参设定值，实际值，前次值
 	VESCStatus status;//电机状态
+  PID_setTypeDef PIDx,PIDs;//PID参数
 	VESCArgum argum;//间值参数
 	VESCLimit limit;//电机限制保护
 	VESCParam instrinsic;//电机内参

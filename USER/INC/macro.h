@@ -4,65 +4,14 @@
 #include "stdbool.h"
 #include "stm32f4xx.h"
 
- /**
- * @description: set specific rotor to control for code selecting
- */
-#define PassRobot
-//#define TryRobot
-#define SteeringMotor
-//#define ActionMotor 
-//#define ALT_PUTBALL
-
 /* selet progrom functional unit
  * VER						流程号是否开启
  * USE_VECS					是否使用VESC
  * USE_ELMO					是否使用ELMO
  * USE_DJ					是否使用大疆电机
  */
-#ifdef PassRobot
-	#ifdef SteeringMotor
-		//#define USE_ELMO
-    //#define USE_EPOS
-		#define USE_DJ
-    #define backPos 1000  //下压时降低速度的位置
-	#elif defined ActionMotor
-    #ifdef ALT_PUTBALL
-      #define USE_DJ
-    #else
-      #define USE_ELMO
-      //#define USE_EPOS
-    #endif
-	#endif
-#elif defined TryRobot
-	#ifdef SteeringMotor
-		#define USE_DJ
-    #define USE_ELMO
-	#elif defined ActionMotor
-		#define USE_ELMO
-	#endif
-#endif
 
-#ifdef SteeringMotor
-		#define BROADCAST_ID 0x00010000
-	#ifdef PassRobot
-		#define MOTOR_0_3 1
-		#define MOTOR_1_2 2
-    #define MOROE_4_and_2 3
-		#define ID_SELF MOROE_4_and_2
-	#elif defined TryRobot
-		#define MOTOR_all 0
-    #define ID_SELF MOTOR_all
-	#endif
-#elif defined ActionMotor
-		#define ID_SELF 0x00010300
-		#define ID_BACK 0x00030101
-		#define BROADCAST_ID 0x00010000
-	#ifdef PassRobot
-  
-	#elif defined TryRobot
-  
-	#endif
-#endif
+#define USE_VESC
 
 /****电磁阀定义****/
 #define valvePaw 0x01

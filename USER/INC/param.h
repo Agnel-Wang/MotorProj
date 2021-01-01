@@ -49,17 +49,6 @@ typedef struct{
     volatile bool Usart2DMASendFinish; // Usart2_DMA传输
 } FlagTypeDef;
 
-/****踢球结构体****/
-typedef struct{
-  u8 cnt;
-  s16 waittime;
-  s16 waitCnt;
-  bool isAutoKick;
-  volatile bool init;
-  bool begin;
-  bool askbegin;
-}KickTypeDef;
-
 //第一位
 #define SYSTEMERROR   0x0000
 #define DJERROR       0x0001
@@ -84,12 +73,6 @@ typedef struct{
 
 /****动作执行参数定义****/
 extern bool send_yes;//EPOS测试定时器循环发送
-extern KickTypeDef kick[3];//提取
-extern u8 kickBall;//踢球次数
-extern u8 pawAction;
-extern bool pawActionOK;
-extern bool ALTbegin;
-extern u8 ALTaction;
 
 /****结构体定义****/
 extern ErrorTypeDef error;

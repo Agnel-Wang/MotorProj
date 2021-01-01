@@ -1,36 +1,12 @@
 #include "param.h"
 
-/* 踢球常量定义 */
-KickTypeDef kick[3];
-u8 kickBall=1;
-bool send_yes;
-
-/*   手爪动作
- *   0: 无动作
- *   1：返回取球
- *   2: 下压
- */
-u8 pawAction=0;
-bool pawActionOK;
-bool ALTbegin;
-u8 ALTaction=0;
-
 void param_Init(void)
 {
     Flag_Init();
     Motor_Init();
     ELMO_Motor_Init();
     VESCInit();
-  {
-    for(int i=0;i<3;i++)
-    {
-      kick[i].cnt=0;
-      kick[i].isAutoKick=false;
-      kick[i].waittime=1000;
-      kick[i].waitCnt=0;
-    }
-  }
-  error.head=creatError();
+    error.head=creatError();
 }
 
 void Flag_Init(void)

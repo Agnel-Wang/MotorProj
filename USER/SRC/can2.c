@@ -260,7 +260,7 @@ void CAN2_RX1_IRQHandler(void)
 #ifdef USE_VESC
 	if((rx_message.IDE == CAN_ID_EXT)&&(rx_message.RTR == CAN_RTR_Data))
 	{
-		u8 ind=0;
+		int32_t ind=0;
 		if((rx_message.ExtId>>8)==CAN_PACKET_STATUS)
 		{
 			VESCmotor[rx_message.ExtId&0xff-1].valReal.speed=(s32)(buffer_32_to_float(rx_message.Data,1e0,&ind)/VESCmotor[rx_message.ExtId&0xff].instrinsic.POLE_PAIRS);
@@ -283,7 +283,7 @@ void CAN2_RX1_IRQHandler(void)
   }
 }
 
-	static CanTxMsg DJ_tx_message;
+static CanTxMsg DJ_tx_message;
 /****DJ电机电流输入****/
 void currentInput(u8 id)
 {
