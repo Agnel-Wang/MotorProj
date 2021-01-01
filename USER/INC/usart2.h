@@ -8,6 +8,7 @@
 #include "param.h"
 #include "stm32f4xx_usart.h"
 #include "epos.h"
+#include "stm32f4xx_can.h"
 
 void USART2_Configuration(void);
 void UsartLCDshow(void);

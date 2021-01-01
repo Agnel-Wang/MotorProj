@@ -39,7 +39,7 @@ typedef struct{
 
 /****标志位结构体****/
 typedef struct{
-    bool valve[4];                     //当前电磁阀状态
+    bool valve[8];                     //当前电磁阀状态
     volatile bool Can1CtrlList_Enable; // CAN1报文控制表启动标志位
     volatile bool Can2CtrlList_Enable; // CAN2报文控制表启动标志位
     volatile bool Can1SendqueueFULL;   // CAN1发送队列满
@@ -51,13 +51,13 @@ typedef struct{
 
 /****踢球结构体****/
 typedef struct{
-  bool prepareOK;
   u8 cnt;
   s16 waittime;
   s16 waitCnt;
   bool isAutoKick;
-  bool init;
-  bool ok;//踢球结束
+  volatile bool init;
+  bool begin;
+  bool askbegin;
 }KickTypeDef;
 
 //第一位
@@ -82,9 +82,17 @@ typedef struct{
   ErrorList* head;
 }ErrorTypeDef;
 
-extern u8 kickBall;
+/****动作执行参数定义****/
+extern bool send_yes;//EPOS测试定时器循环发送
+extern KickTypeDef kick[3];//提取
+extern u8 kickBall;//踢球次数
+extern u8 pawAction;
+extern bool pawActionOK;
+extern bool ALTbegin;
+extern u8 ALTaction;
+
+/****结构体定义****/
 extern ErrorTypeDef error;
-extern KickTypeDef kick[3];
 extern Usart_Struct usart;
 extern FlagTypeDef flag;
 

@@ -17,6 +17,8 @@
 #define DJ_MOTOR7_RX 0x207
 #define DJ_MOTOR8_RX 0x208
 
+extern bool motorSwitchOn;
+
 /****电机模式****/
 enum MOTOR_MODE { duty=0, current, RPM, brake, zero, position, handbrake};
 
@@ -36,7 +38,7 @@ typedef struct{
     u16 PULSE;//编码器线数
     u8  RATIO;//减速比
     u16 CURRENT_LIMIT;//最大输出电流限制
-    u8  GEARRATIO;//外部齿轮减速比
+    double  GEARRATIO;//外部齿轮减速比
 }MotorParam;
 
 /****电机外参****/

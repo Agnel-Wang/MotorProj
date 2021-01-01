@@ -8,5 +8,4 @@
 #include "vesc.h"
 
 void TIM2_Configuration(void);
-
 #endif

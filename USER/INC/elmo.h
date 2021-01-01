@@ -26,14 +26,14 @@
 #define Elmo_Motor6_TX	0x306
 #define Elmo_Motor7_TX	0x307
 #define Elmo_Motor8_TX	0x308
-#define Elmo_Motor1_error 0x81
-#define Elmo_Motor2_error 0x82
-#define Elmo_Motor3_error 0x83
-#define Elmo_Motor4_error 0x84
-#define Elmo_Motor5_error 0x85
-#define Elmo_Motor6_error 0x86
-#define Elmo_Motor7_error 0x87
-#define Elmo_Motor8_error 0x88
+#define Elmo_Motor1_error 0x181
+#define Elmo_Motor2_error 0x182
+#define Elmo_Motor3_error 0x183
+#define Elmo_Motor4_error 0x184
+#define Elmo_Motor5_error 0x185
+#define Elmo_Motor6_error 0x186
+#define Elmo_Motor7_error 0x187
+#define Elmo_Motor8_error 0x188
 
 /****ELMO内参****/
 typedef struct{
@@ -43,7 +43,7 @@ typedef struct{
 
 /****ELMO外参****/
 typedef struct{
-  vs16 angle;//轴前角度
+  vs32 angle;//轴前角度
   vs16 current;//电流
   vs32 speed;//速度（rpm, 后面计算时转换为JV值与SP值）
 }ELMOValue;

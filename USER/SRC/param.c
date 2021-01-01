@@ -3,6 +3,17 @@
 /* 踢球常量定义 */
 KickTypeDef kick[3];
 u8 kickBall=1;
+bool send_yes;
+
+/*   手爪动作
+ *   0: 无动作
+ *   1：返回取球
+ *   2: 下压
+ */
+u8 pawAction=0;
+bool pawActionOK;
+bool ALTbegin;
+u8 ALTaction=0;
 
 void param_Init(void)
 {

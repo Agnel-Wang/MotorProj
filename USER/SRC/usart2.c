@@ -30,7 +30,7 @@ void DMA1_Stream6_IRQHandler(void) //数据传输完成，产生中断，检查�
 }
 
 //串口屏
-vu8 interface=0;
+vu8 interface=0;//当前界面ID
 u8 USART2_RX_STA = 0;
 void USART2_IRQHandler(void) 
 {
@@ -102,7 +102,7 @@ void USART2_IRQHandler(void)
             }break;
             case 0x08://初始化
             {
-              kick[kickBall-1].init=usart.RxBuffer_USART2[8];
+              kick[kickBall-1].init=true;
             }break;
             case 0x09://位置清零
             {
@@ -125,6 +125,71 @@ void USART2_IRQHandler(void)
             case 0x0D://MO
             {
               MO(3, SetData, 0, usart.RxBuffer_USART2[8]);
+            }break;
+            case 0x0E://取球
+            {
+              pawAction=1;
+            }break;
+            case 0x0F://放球
+            {
+              pawAction=2;
+            }break;
+            case 0x10://寻零
+            {
+              motor[4].mode=zero;motor[5].mode=zero;
+            }break;
+            case 0x11://ALT整套动作
+            {
+              ALTbegin=true;
+              ALTaction=1;
+              motor[0].enable=true;motor[1].enable=true;motor[2].enable=true;motor[3].enable=true;
+              motor[0].begin=true;motor[1].begin=true;motor[2].begin=true;motor[3].begin=true;
+            }break;
+            case 0x13://手爪气缸
+            {
+              CanTxMsg tx_message;
+              tx_message.ExtId =0x00010400;
+              tx_message.RTR = CAN_RTR_Data;
+              tx_message.IDE = CAN_Id_Extended;
+              tx_message.DLC = 4;
+               tx_message.Data[0] = 0x04;
+              if(usart.RxBuffer_USART2[8]==1)
+              {
+                tx_message.Data[0] = 'S'+0x40;
+                tx_message.Data[1] = 'N';
+              }
+              else
+              {
+                tx_message.Data[0] = 'E'+0x40;
+                tx_message.Data[1] = 'F';
+              }
+               tx_message.Data[2] = valvePaw;
+              CAN_Transmit(CAN1,&tx_message);
+            }break;
+            case 0x16://球座气缸
+            {
+              CanTxMsg tx_message;
+              tx_message.ExtId =0x00010400;
+              tx_message.RTR = CAN_RTR_Data;
+              tx_message.IDE = CAN_Id_Extended;
+              tx_message.DLC = 4;
+                tx_message.Data[0] = 0x04;
+              if(usart.RxBuffer_USART2[8]==1)
+              {
+                tx_message.Data[0] = 'S'+0x40;
+                tx_message.Data[1] = 'N';
+              }
+              else
+              {
+                tx_message.Data[0] = 'E'+0x40;
+                tx_message.Data[1] = 'F';
+              }
+                tx_message.Data[2] = valveTee;
+              CAN_Transmit(CAN1,&tx_message);
+            }break; 
+            case 0x18:
+            {
+              kick[kickBall-1].begin=true;
             }break;
             default:;
           }
@@ -157,7 +222,7 @@ void USART2_IRQHandler(void)
                   break;
                 case 0x08:SP(kickBall, SetData, 0, ELMOmotor[kickBall-1].valSet.speed);Beep_Show(1);
                   break;
-                case 0x0B:kick[kickBall-1].init=true;kick[kickBall-1].cnt=0;kick[kickBall-1].ok=false;Beep_Show(1);
+                case 0x0B:kick[kickBall-1].init=true;kick[kickBall-1].cnt=0;Beep_Show(1);
                   break;
                 case 0x0C:RESET_PRO
                   break;
@@ -259,6 +324,18 @@ void USART2_IRQHandler(void)
             case 0x1C:
                 motor[3].begin=usart.RxBuffer_USART2[8];
               break;
+            case 0x1D:
+                if(!motor[0].enable) motor[0].status.isSetZero=true;
+              break;
+            case 0x1E:
+                if(!motor[1].enable) motor[1].status.isSetZero=true;
+              break;
+            case 0x1F:
+                if(!motor[2].enable) motor[2].status.isSetZero=true;
+              break;
+            case 0x20:
+                if(!motor[3].enable) motor[3].status.isSetZero=true;
+              break;
             default:;
           }
         }break;
@@ -341,6 +418,18 @@ void USART2_IRQHandler(void)
             case 0x1C:
                 motor[7].begin=usart.RxBuffer_USART2[8];
               break;
+            case 0x1D:
+                if(!motor[4].enable) motor[4].status.isSetZero=true;
+              break;
+            case 0x1E:
+                if(!motor[5].enable) motor[5].status.isSetZero=true;
+              break;
+            case 0x1F:
+                if(!motor[6].enable) motor[6].status.isSetZero=true;
+              break;
+            case 0x20:
+                if(!motor[7].enable) motor[7].status.isSetZero=true;
+              break;
             default:;
           }
         }break;
@@ -348,10 +437,6 @@ void USART2_IRQHandler(void)
         {
           switch (usart.RxBuffer_USART2[5])
           {
-            case 0x02://Boot Up
-            {
-              EPOS_BootUP(1, 0);EPOS_BootUP(2, 0);EPOS_BootUP(3, 0);EPOS_BootUP(4, 0);
-            }break;
             case 0x03://Set PVM
             {
               EPOS_SetMode(1, 3, 0);EPOS_SetMode(2, 3, 0);EPOS_SetMode(3, 3, 0);EPOS_SetMode(4, 3, 0);
@@ -379,6 +464,14 @@ void USART2_IRQHandler(void)
             case 0x09://Enable Operation
             {
               EPOS_EnableOperation(1, 0);EPOS_EnableOperation(2, 0);EPOS_EnableOperation(3, 0);EPOS_EnableOperation(4, 0);
+            }break;
+            case 0x0A:
+            {
+              send_yes=usart.RxBuffer_USART2[8];
+            }break;
+            case 0x0B:
+            {
+              EPOS_ReadStatusword(1, 0);EPOS_ReadStatusword(2, 0);EPOS_ReadStatusword(3, 0);EPOS_ReadStatusword(4, 0);
             }break;
             default:;
           }
@@ -423,7 +516,7 @@ void UsartLCDshow(void)
   
     switch(interface)
     {
-    case 0x01:/****P车主界面****/
+    case 1:/****P车主界面****/
     {
       usart.TxBuffer_USART2[i++]=0xee;
       usart.TxBuffer_USART2[i++]=0xb1;	
@@ -486,6 +579,18 @@ void UsartLCDshow(void)
       usart.TxBuffer_USART2[i++]=0x00;
       usart.TxBuffer_USART2[i++]=0x01;
       usart.TxBuffer_USART2[i++]=ELMOmotor[2].enable;
+      
+      usart.TxBuffer_USART2[i++]=0x00;
+      usart.TxBuffer_USART2[i++]=0x13;
+      usart.TxBuffer_USART2[i++]=0x00;
+      usart.TxBuffer_USART2[i++]=0x01;
+      usart.TxBuffer_USART2[i++]=flag.valve[valvePaw-1];
+      
+      usart.TxBuffer_USART2[i++]=0x00;
+      usart.TxBuffer_USART2[i++]=0x16;
+      usart.TxBuffer_USART2[i++]=0x00;
+      usart.TxBuffer_USART2[i++]=0x01;
+      usart.TxBuffer_USART2[i++]=flag.valve[valveTee-1];
       
       usart.TxBuffer_USART2[i++]=0xff;
       usart.TxBuffer_USART2[i++]=0xfc;

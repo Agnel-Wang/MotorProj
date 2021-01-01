@@ -9,9 +9,10 @@
  */
 #define PassRobot
 //#define TryRobot
-//#define SteeringMotor
-#define ActionMotor 
+#define SteeringMotor
+//#define ActionMotor 
 //#define ALT_PUTBALL
+
 /* selet progrom functional unit
  * VER						流程号是否开启
  * USE_VECS					是否使用VESC
@@ -23,15 +24,13 @@
 		//#define USE_ELMO
     //#define USE_EPOS
 		#define USE_DJ
-    
     #define backPos 1000  //下压时降低速度的位置
 	#elif defined ActionMotor
-      #define preparePOS 100
     #ifdef ALT_PUTBALL
       #define USE_DJ
     #else
-      //#define USE_ELMO
-      #define USE_EPOS
+      #define USE_ELMO
+      //#define USE_EPOS
     #endif
 	#endif
 #elif defined TryRobot
@@ -50,8 +49,6 @@
 		#define MOTOR_1_2 2
     #define MOROE_4_and_2 3
 		#define ID_SELF MOROE_4_and_2
-		//#define GearRatio (104.0f/17.0f)
-    #define GearRatio (78.0f/17.0f)   //P车， 实际上是T车， EC-4P-30
 	#elif defined TryRobot
 		#define MOTOR_all 0
     #define ID_SELF MOTOR_all
@@ -66,6 +63,10 @@
   
 	#endif
 #endif
+
+/****电磁阀定义****/
+#define valvePaw 0x01
+#define valveTee 0x02
 
 #define Can1ControlList 1
 #define Can2ControlList 2

@@ -11,8 +11,8 @@
 /**
   *@brief 报文控制表
   */
-#define CAN_QUEUESIZE           30      //发送报文队列长度
-#define CAN_HAVESENDQUEUESIZE   5       //已发送报文队列长度
+#define CAN_QUEUESIZE           64      //发送报文队列长度
+#define CAN_HAVESENDQUEUESIZE   8       //已发送报文队列长度
 #define CAN1_NodeNumber         6u      //不要超过8（故障标志位只有8位）
 #define CAN2_NodeNumber         6u      //不要超过8（故障标志位只有8位）
 #define Rear1	((Can1_Sendqueue.Rear+1)%CAN_QUEUESIZE)

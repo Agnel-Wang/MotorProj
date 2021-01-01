@@ -36,8 +36,8 @@ static void Task_Start(void *pdata)
 	OSTaskCreate(Task_Flag, (void *)0,(OS_STK *)&FLAG_TASK_STK[FLAG_STK_SIZE - 1], FLAG_TASK_PRIO);
 	OSTaskCreate(Task_Motor, (void *)0, (OS_STK *)&MOTOR_TASK_STK[MOTOR_STK_SIZE - 1],MOTOR_TASK_PRIO);
 	OSTaskCreate(Task_Scope, (void *)0,(OS_STK *)&SCOPE_TASK_STK[SCOPE_STK_SIZE - 1], SCOPE_TASK_PRIO);
-	//Beep_Show(2);//上电提醒
-#ifdef SteeringMotor//电机使能放在这里以消除初始误差
+  OSTimeDly(100);
+#ifdef SteeringMotor
   #if ID_SELF==MOTOR_0_3  //ELMO/EPOS连接判断
     #ifdef USE_ELMO
       NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);
@@ -55,21 +55,24 @@ static void Task_Start(void *pdata)
     #elif defined USE_EPOS
       
     #endif
-    motor[0].enable=ENABLE;motor[3].enable=ENABLE;
-  #elif ID_SELF==MOTOR_1_2
-    motor[1].enable=ENABLE;motor[2].enable=ENABLE;
-  #elif ID_SELF==MOTOR_all
-    motor[0].enable=ENABLE;motor[1].enable=ENABLE;motor[2].enable=ENABLE;
-  #elif ID_SELF == MOROE_4_and_2
-    motor[0].enable=ENABLE;motor[1].enable=ENABLE;motor[2].enable=ENABLE;motor[3].enable=ENABLE;
-    //motor[4].enable=ENABLE;motor[5].enable=ENABLE;
   #endif
 #else
   #if defined USE_ELMO | defined USE_EPOS
-  NMT_Operational(CAN2);OSTimeDly(5);NMT_Operational(CAN2);OSTimeDly(5);NMT_Operational(CAN2);OSTimeDly(5);
+  NMT_Operational(CAN2);NMT_Operational(CAN2);NMT_Operational(CAN2);
+  MO(1, SetData, 0, 0);MO(2, SetData, 0, 0);MO(3, SetData, 0, 0);
+  #endif
+  
+  #ifdef PassRobot
+    kick[0].init=true;kick[1].init=true;kick[2].init=true;
+    PX(1, SetData, 0, 0);PX(2, SetData, 0, 0);PX(3, SetData, 0, 0);
+    UM(1, SetData, 0, ELMOmotor[0].mode);UM(2, SetData, 0, ELMOmotor[1].mode);UM(3, SetData, 0, ELMOmotor[2].mode);
+    MO(1, SetData, 0, 1);OSTimeDly(5);MO(2, SetData, 0, 1);OSTimeDly(5);MO(3, SetData, 0, 1);
+  #elif defined TryRobot
+  
   #endif
 #endif
 	Led8DisData(0);
+	Beep_Show(2);//上电提醒，初始完成
   OSTaskSuspend(START_TASK_PRIO); //挂起起始任务
   OS_EXIT_CRITICAL();             //退出临界区
 }
@@ -125,42 +128,125 @@ static void Task_Flag(void *pdata)
 static void Task_Motor(void *pdata) 
 {
   pdata = pdata;
-
-/*
- *   0: 无动作
- *   1：返回取球
- *   2: 下压
- */
-  u8 pawAction=0;
-  bool pawActionOK;
-  
+   NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);
+  for(int i=0;i<50;i++)
+  {
+    MO_CAN1(0,SetData,1);
+    OSTimeDly(1500);
+  }
+  if(ELMOmotor[0].enable&&ELMOmotor[1].enable&&ELMOmotor[2].enable&&ELMOmotor[3].enable)
+  {
+    Beep_Show(2);
+    Led8DisData(1);
+  }
+  else 
+  {
+    Beep_Show(4);
+    Led8DisData(2);
+  }
+    MO_CAN1(0,SetData,0);
+    MO_CAN1(0,SetData,0);
   while (1) 
   {
+    OSTimeDly(500);
+    if(motorSwitchOn)
+    {
+      motorSwitchOn=false;
+      OSTimeDly(5000);
+      for(int i=0;i<8;i++){motor[i].valueReal.pulse=0;motor[i].valueReal.angle=0;}//消除DJ电机初始位置误差
+#ifdef SteeringMotor
+  #if ID_SELF==MOTOR_0_3 
+    motor[0].enable=ENABLE;motor[3].enable=ENABLE;
+  #elif ID_SELF==MOTOR_1_2
+    motor[1].enable=ENABLE;motor[2].enable=ENABLE;
+  #elif ID_SELF==MOTOR_all
+    motor[0].enable=ENABLE;motor[1].enable=ENABLE;motor[2].enable=ENABLE;
+  #elif ID_SELF == MOROE_4_and_2
+    motor[0].enable=ENABLE;motor[1].enable=ENABLE;motor[2].enable=ENABLE;motor[3].enable=ENABLE;motor[4].enable=ENABLE;motor[5].enable=ENABLE;
+  #endif
+#else
+      
+#endif
+    }
 #ifdef PassRobot
     #ifdef SteeringMotor
-      if(pawAction==1)//回零，取球
+      switch(pawAction)
       {
-        motor[4].valueSet.angle=0;motor[5].valueSet.angle=0;
-        motor[4].limit.posSPlimit=2000;motor[4].limit.posSPlimit=2000;
-        motor[4].begin=true;motor[5].begin=true;
-        pawAction=0;
-      }
-      else if(pawAction==2)//放球
-      {
-        motor[4].valueSet.angle=backPos;motor[5].valueSet.angle=backPos;
-        motor[4].limit.posSPlimit=2000;motor[4].limit.posSPlimit=2000;
-        if(ABS(motor[4].valueSet.angle-motor[4].valueReal.angle)<30)
+        case 2://放球
         {
-          motor[4].limit.posSPlimit=500;motor[4].limit.posSPlimit=500;
-        }
-        if(motor[4].status.stuck||motor[4].status.stuck)
-        {
-          motor[4].begin=false;motor[5].begin=false;
+          motor[4].valueSet.angle=161;motor[5].valueSet.angle=-motor[4].valueSet.angle;
+          motor[4].begin=true;motor[5].begin=true;
           pawAction=0;
-        }
+        }break;
+        case 1://取球
+        {
+          motor[4].valueSet.angle=2;motor[5].valueSet.angle=-motor[4].valueSet.angle;
+        }break;
+        default:;
       }
     #elif defined ActionMotor
-    
+      #ifdef ALT_PUTBALL
+        if(ALTbegin)
+        {
+          switch(ALTaction)
+          {
+            case 0:
+              if(motor[0].status.arrived)
+              {
+                ALTaction=2;
+              };
+              break;
+            case 1://旋转
+            {
+              motor[0].valueSet.angle-=90;
+              ALTaction=0;
+            }break;
+            case 2://夹球
+            {
+              motor[1].valueSet.angle=400;
+              OSTimeDly(20);
+              if(motor[1].status.arrived)
+              {
+                ALTaction=3;
+              }
+                
+            }break;
+            case 3://下落
+            {
+              motor[2].begin=false;
+              motor[3].valueSet.angle=86;
+              OSTimeDly(200);
+              if(motor[3].status.arrived)
+              {
+                ALTaction=4;
+              }
+            }break;
+            case 4://放球
+            {
+              motor[1].valueSet.angle=2500;
+              OSTimeDly(20);
+              if(motor[1].status.arrived)
+              {
+                ALTaction=5;
+              }
+            }break;
+            case 5://返回
+            {
+              motor[3].valueSet.angle=0;
+              OSTimeDly(20);
+              
+              if(motor[3].status.arrived) 
+              {
+                ALTaction=0;
+                ALTbegin=false;
+              }
+            }break;
+            default:;
+          }
+        }
+      #else
+      
+      #endif
     #endif
 #elif defined TryRobot  
     #ifdef SteeringMotor
@@ -169,7 +255,6 @@ static void Task_Motor(void *pdata)
     
     #endif  
 #endif
-    OSTimeDly(500);
   }
 }
 
@@ -178,7 +263,7 @@ static void Task_Scope(void *pdata)
 {
   while (1) 
   {
-    VS4Channal_Send(ELMOmotor[0].valReal.speed,0, 0, 0);
+    VS4Channal_Send(0,0, 0, 0);
     OSTimeDly(300);
   }
 }

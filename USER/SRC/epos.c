@@ -1,6 +1,11 @@
 #include "epos.h"
 
 u8 eposInitOK=0;
+
+EPOSmotorTypedef EPOSmotor[4];
+
+
+
 /*
  * @description: set EPOS mode of operation
  * @param: ID:      node-ID
@@ -351,23 +356,6 @@ void EPOS_ReadTorque(u8 ID, u8 InConGrpFlag)
 		Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[5]=0x00;
 		Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[6]=0x00;
 		Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[7]=0x00;
-        Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].InConGrpFlag=InConGrpFlag;
-    }
-    Can2_Sendqueue.Rear=Rear2; 
-}
-
-void EPOS_BootUP(u8 ID, u8 InConGrpFlag)
-{
-    if(Rear2==Can2_Sendqueue.Front)
-    {
-        flag.Can2SendqueueFULL++;
-        return;
-    }
-    else
-    {
-        Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].ID=0x700+ID;
-        Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].DLC=0x01;
-        Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].Data[0]=0x00;
         Can2_Sendqueue.Can_DataSend[Can2_Sendqueue.Rear].InConGrpFlag=InConGrpFlag;
     }
     Can2_Sendqueue.Rear=Rear2; 

@@ -63,7 +63,7 @@ void TIM2_IRQHandler(void)
 #endif
 #ifdef USE_EPOS
   EposAskStatus();
-  ElmoAction();
+  EposAction();
 #endif
     }
     TIM2->SR &= ~(1<<0);//清除中断标志位
@@ -76,7 +76,8 @@ void ElmoAskStatus(void)
   {
     AskTimeCnt=0;
    // VX(0, 0); 
-    PX(0, GetData, 0);
+   // if(kick[0].askbegin|kick[1].askbegin|kick[2].askbegin)
+      PX(0, GetData, 0);
   }
   /* 反馈超时判断 */
   for(int id=0;id<4;id++)
@@ -142,27 +143,24 @@ void ElmoAction(void)
     if(kick[i].init)
     {
       kick[i].init=false;
-      kick[i].cnt=0;
       UM(i+1, SetData, 0, ELMOmotor[i].mode);
       PX(i+1, SetData, 0, 0);
       SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
-      kick[i].cnt++;
-      ELMOmotor[i].valSet.angle=kick[i].cnt*720;
+      ELMOmotor[i].valSet.angle=1440;
     }
     if(ELMOmotor[i].enable)
     {
-      if(!kick[i].prepareOK)
+      if(kick[i].begin)
       {
-        if(ABS(ELMOmotor[i].valReal.angle-preparePOS)<10)
+        if(ABS(ELMOmotor[i].valReal.angle-ELMOmotor[i].valSet.angle)<10)
         {
-          kick[i].prepareOK=true;
-          SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
+          ELMOmotor[i].valSet.angle+=1440;
         }
-      }
-      if(kick[i].prepareOK&&(ABS(ELMOmotor[i].valReal.angle-ELMOmotor[i].valSet.angle)<10))
-      {
-        kick[i].cnt++;
-          ELMOmotor[i].valSet.angle=kick[i].cnt*1440;
+        PA(i+1, SetData, 0, ELMOmotor[i].valSet.angle);
+        SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
+        BG(i+1, 0);
+        
+        kick[i].begin=false;
       }
     }
   }
@@ -170,17 +168,39 @@ void ElmoAction(void)
 #endif
 }
 
+u16 errorcnt=0;
+u16 speed=40;
 void EposAskStatus(void)
 {
-  if(AskTimeCnt++>3)
+  for(int i=1;i<5;i++)
   {
-    AskTimeCnt=0;
-    
+    EPOS_ReadStatusword(i, 0);
+    if(EPOSmotor[i-1].status.statusword==0x0208)
+    {
+      errorcnt++;
+      EPOS_ClearFault(i, 0);
+      EPOS_StartMotor(i, 0);
+    }
   }
-  
 }
 
 void EposAction()
 {
-
+  if(AskTimeCnt++>14)
+  {
+    AskTimeCnt=0;
+    if(send_yes)
+    {
+      if(speed<500) speed++;
+      else speed=40;
+    }
+    for(int i=1;i<5;i++)
+    {
+      if(send_yes)
+      {
+        EPOS_SetPVMspeed(i, speed, 0);
+        EPOS_EnableOperation(i, 0);
+      }
+    }
+  }
 }
