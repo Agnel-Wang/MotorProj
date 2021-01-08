@@ -42,7 +42,7 @@
 #define DecodeS16Data(f,buff)	{*f = *(s16*)buff;}
 #define EncodeU16Data(f,buff)	{*(u16*)buff = *f;}
 #define DecodeU16Data(f,buff)	{*f = *(u16*)buff;}
-#define EncodeS32Data(f,buff)	{*(s32*)buff = *f;}
-#define DecodeS32Data(f,buff)	{*f = *(s32 *)buff;}
+#define EncodeU32Data(f,buff)	{*(u32*)buff = *f;}
+#define DecodeU32Data(f,buff)	{*f = *(u32 *)buff;}
 
 #endif

@@ -13,9 +13,10 @@ typedef struct{
 
 /****VESC外参****/
 typedef struct{
-	volatile float current;//电流
+	volatile int16_t current;//电流
 	vs32 speed;//速度
-	vs32 position;//位置
+	volatile float angle;//位置
+  vs32 position;
 	volatile float duty;//占空比
 }VESCVal;
 
@@ -23,6 +24,7 @@ typedef struct{
 typedef struct{
 	bool stuck;//电机堵转
 	bool timeout;//can报文反馈超时
+  bool isSetZero;//设置当前位置为零点
 }VESCStatus;
 
 /****VESC限制保护****/
@@ -32,9 +34,13 @@ typedef struct{
 
 /***不需要关心的一些参数*****/
 typedef struct{
-    u8  timeoutCnt;//超时用计数值，[相关于超时状态timeout]
-    u32 lastRxTim;//上次接收到报文的系统时间，[相关于超时状态timeout]
-    u16 timeoutTicks;//判断超时用系统节拍数，[相关于超时状态timeout]
+  u8  timeoutCnt;//超时用计数值，[相关于超时状态timeout]
+  u32 lastRxTim;//上次接收到报文的系统时间，[相关于超时状态timeout]
+  u16 timeoutTicks;//判断超时用系统节拍数，[相关于超时状态timeout]
+  vs16 distance;//两次角度的差值
+  bool fistPos;//第一次上电角度
+  vu16 angleNow;
+  vu16 anglePrv;
 }VESCArgum;
 
 /****VESC电机结构体****/
@@ -42,7 +48,7 @@ typedef struct{
 	bool enable;//电机使能
 	bool begin;//电机启动
 	u8 mode;//电机模式
-	VESCVal	valSet,valReal,valPrv;//外参设定值，实际值，前次值
+	VESCVal	valSet,valReal;//外参设定值，实际值，前次值
 	VESCStatus status;//电机状态
   PID_setTypeDef PIDx,PIDs;//PID参数
 	VESCArgum argum;//间值参数
@@ -86,6 +92,7 @@ typedef enum
 extern VESC_MOTOR VESCmotor[4];
 
 void VESCInit(void);
+void VESC_caculate(VESC_MOTOR* motor);
 void VESC_Set_Duty_Cycle(u8 controller_ID,float duty_cycle,u8 InConGrpFlag);
 void VESC_Set_Speed(u8 controller_ID,s32 speed,u8 InConGrpFlag);
 void VESC_Set_Current(u8 controller_ID,float current,u8 InConGrpFlag);

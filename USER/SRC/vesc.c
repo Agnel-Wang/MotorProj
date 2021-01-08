@@ -16,11 +16,12 @@ void VESCInit(void)
 	}
 	{//间值参数设置
 		VESCargum.timeoutTicks=2000;//2000ms
+    VESCargum.fistPos=true;
 	}
 	/****0号电机初始化****/
 	VESCmotor[0].instrinsic=SUNNYSKYinstrin;
-	VESCmotor[0].enable=false;
-	VESCmotor[0].begin=false;
+	VESCmotor[0].enable=DISABLE;
+	VESCmotor[0].begin=ENABLE;
 	VESCmotor[0].mode=RPM;
 	VESCmotor[0].valSet.current=10;
 	VESCmotor[0].valSet.speed=1000;
@@ -62,6 +63,12 @@ void VESCInit(void)
 		VESCmotor[i].limit = VESClimit;
 		VESCmotor[i].argum = VESCargum;
 	}
+}
+
+//VESC状态计算
+void VESC_caculate(VESC_MOTOR* motor)
+{
+  if(motor->status.isSetZero) {motor->status.isSetZero=false;motor->valReal.position=0;}
 }
 
 /** 

@@ -36,31 +36,13 @@ void CAN1_Configuration(void)
   CAN_Init(CAN1, &CAN_InitStructure);      //初始化CAN1
 
   /* CAN filter init */
-#ifdef SteeringMotor
   CAN_FilterInitStructure.CAN_FilterNumber = 2;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-  #if ID_SELF == MOTOR_0_3
-  CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor1_TX<< 5;
-  CAN_FilterInitStructure.CAN_FilterIdLow =Elmo_Motor4_TX << 5;
-  CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0x320 << 5;
-  CAN_FilterInitStructure.CAN_FilterMaskIdLow =0 << 5;
-  #elif ID_SELF == MOTOR_1_2
-  CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor2_TX << 5;
-  CAN_FilterInitStructure.CAN_FilterIdLow =Elmo_Motor3_TX << 5;
-  CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0x320 << 5;
-  CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x309 << 5;
-  #elif ID_SELF == MOTOR_all
-	CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor1_TX<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = Elmo_Motor2_TX<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =Elmo_Motor3_TX << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0X320 << 5;
-  #elif ID_SELF == MOROE_4_and_2
 	CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor1_TX<< 5;
 	CAN_FilterInitStructure.CAN_FilterIdLow = Elmo_Motor2_TX<< 5;
 	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =Elmo_Motor3_TX << 5;
 	CAN_FilterInitStructure.CAN_FilterMaskIdLow =Elmo_Motor4_TX << 5;
-  #endif
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
@@ -126,7 +108,6 @@ void CAN1_Configuration(void)
 	CAN_FilterInit(&CAN_FilterInitStructure); 
   #endif
   #endif
-#endif
 #ifdef ActionMotor
   CAN_FilterInitStructure.CAN_FilterNumber = 2; //屏蔽位模式
   CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;

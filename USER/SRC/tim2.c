@@ -25,6 +25,7 @@ void TIM2_IRQHandler(void)
 #ifdef USE_VESC
         for(int i=0;i<4;i++)
         {
+            VESC_caculate(&VESCmotor[i]);
             if(VESCmotor[i].enable)
             {
                 if(VESCmotor[i].begin)
@@ -41,6 +42,7 @@ void TIM2_IRQHandler(void)
                 else VESC_Set_Brake_Current(i+1,VESCmotor[i].limit.breakCurrent,0);
             }
             else VESC_Set_Current(i+1,0.0,0);
+            
             /* 反馈超时判断 */
             if(VESCmotor[i].enable&&((OSTimeGet()-VESCmotor[i].argum.lastRxTim)>VESCmotor[i].argum.timeoutTicks)) VESCmotor[i].argum.timeoutCnt++;
             else VESCmotor[i].argum.timeoutCnt=0;

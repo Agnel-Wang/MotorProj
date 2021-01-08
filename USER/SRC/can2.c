@@ -231,7 +231,7 @@ void CAN2_RX1_IRQHandler(void)
 			Elmo_Feedback_Deel(&Can2_MesgSentList[id]);
 		if(rx_message.Data[0]=='M'&&rx_message.Data[1]=='O'&&(rx_message.Data[3]&BIT6)!=1)
 		{
-      if(ABS(rx_message.Data[4])<0x02)//20.09.26 暂时先这样随便根据大小判断一下
+      if(ABS(rx_message.Data[4])<0x02)//20.09.26 暂时先这样根据大小判断一下
 			ELMOmotor[id].enable=rx_message.Data[4];
 		}
 		if(rx_message.Data[0]=='V'&&rx_message.Data[1]=='X'&&(rx_message.Data[3]&BIT6)!=1)
@@ -261,14 +261,23 @@ void CAN2_RX1_IRQHandler(void)
 	if((rx_message.IDE == CAN_ID_EXT)&&(rx_message.RTR == CAN_RTR_Data))
 	{
 		int32_t ind=0;
+    u8 id = rx_message.ExtId&0xff-1;
 		if((rx_message.ExtId>>8)==CAN_PACKET_STATUS)
 		{
-			VESCmotor[rx_message.ExtId&0xff-1].valReal.speed=(s32)(buffer_32_to_float(rx_message.Data,1e0,&ind)/VESCmotor[rx_message.ExtId&0xff].instrinsic.POLE_PAIRS);
-			VESCmotor[rx_message.ExtId&0xff-1].valReal.current=buffer_16_to_float(rx_message.Data,1e1,&ind);
-			VESCmotor[rx_message.ExtId&0xff-1].valReal.duty=buffer_16_to_float(rx_message.Data,1e3,&ind);	
+			VESCmotor[id].valReal.speed=(s32)(buffer_32_to_float(rx_message.Data,1e0,&ind)/VESCmotor[rx_message.ExtId&0xff].instrinsic.POLE_PAIRS);
+			VESCmotor[id].valReal.current=buffer_16_to_float(rx_message.Data,1e3,&ind);
+			VESCmotor[id].valReal.angle=buffer_16_to_float(rx_message.Data,1e1,&ind);
+      //位置计算
+      ChangeData(&rx_message.Data[6],&rx_message.Data[7]);
+      DecodeU16Data(&VESCmotor[id].argum.angleNow,&rx_message.Data[6]);
+      VESCmotor[id].argum.distance=VESCmotor[id].argum.angleNow-VESCmotor[id].argum.anglePrv;
+      if(VESCmotor[id].argum.fistPos) {VESCmotor[id].argum.fistPos=false;VESCmotor[id].argum.distance=0;}
+      VESCmotor[id].argum.anglePrv=VESCmotor[id].argum.angleNow;
+      if(ABS(VESCmotor[id].argum.distance)>1800) VESCmotor[id].argum.distance -= SIG(VESCmotor[id].argum.distance)*3600;
+      VESCmotor[id].valReal.position += VESCmotor[id].argum.distance;
 		}
+    VESCmotor[id].argum.lastRxTim=OSTimeGet();
 	}
-	VESCmotor[rx_message.ExtId&0xff-1].argum.lastRxTim=OSTimeGet();
 #endif
 #ifdef USE_EPOS
     if((rx_message.IDE == CAN_ID_EXT)&&(rx_message.RTR == CAN_RTR_Data))

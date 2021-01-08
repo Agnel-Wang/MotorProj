@@ -120,6 +120,9 @@ static void Task_Motor(void *pdata)
   }
     MO_CAN1(0,SetData,0);
     MO_CAN1(0,SetData,0);
+#elif defined USE_VESC
+  
+  
 #endif
   while (1) 
   {
