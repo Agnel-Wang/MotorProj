@@ -1,6 +1,7 @@
 #ifndef __VESC_H
 #define __VESC_H
 
+#include "pid.h"
 #include "stdint.h"
 #include "param.h"
 #include "queue.h"
@@ -30,6 +31,10 @@ typedef struct{
 /****VESC限制保护****/
 typedef struct{
 	float breakCurrent;//刹车电流
+  bool isPosLimitOn;//位置限制
+  s32 maxPosition;//位置限制的最大位置
+  bool isPosSPLimitOn;//位置环速度限制
+  s32 posSPlimit;//位置环下的最大速度
 }VESCLimit;
 
 /***不需要关心的一些参数*****/
@@ -41,6 +46,8 @@ typedef struct{
   bool fistPos;//第一次上电角度
   vu16 angleNow;
   vu16 anglePrv;
+  float lockAngle;
+  u32 lockPosition;
 }VESCArgum;
 
 /****VESC电机结构体****/
@@ -50,7 +57,7 @@ typedef struct{
 	u8 mode;//电机模式
 	VESCVal	valSet,valReal;//外参设定值，实际值，前次值
 	VESCStatus status;//电机状态
-  PID_setTypeDef PIDx,PIDs;//PID参数
+  PID_setTypeDef PIDx;//PID参数
 	VESCArgum argum;//间值参数
 	VESCLimit limit;//电机限制保护
 	VESCParam instrinsic;//电机内参
@@ -93,6 +100,7 @@ extern VESC_MOTOR VESCmotor[4];
 
 void VESCInit(void);
 void VESC_caculate(VESC_MOTOR* motor);
+void VESC_position_mode(VESC_MOTOR* motor);
 void VESC_Set_Duty_Cycle(u8 controller_ID,float duty_cycle,u8 InConGrpFlag);
 void VESC_Set_Speed(u8 controller_ID,s32 speed,u8 InConGrpFlag);
 void VESC_Set_Current(u8 controller_ID,float current,u8 InConGrpFlag);

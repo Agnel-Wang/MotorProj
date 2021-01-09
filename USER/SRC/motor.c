@@ -9,6 +9,7 @@ DJmotor motor[8];
 //电机参数初始化
 void Motor_Init(void)
 {
+  u8 id=0;
     {//电机内参
         M2006instrin.PULSE=8192;            M3508instrin.PULSE=8192;
         M2006instrin.RATIO=36;              M3508instrin.RATIO=19;
@@ -17,12 +18,12 @@ void Motor_Init(void)
     }
     {//电机限制保护设置
         Motorlimit.isPosSPLimitOn=true;
-        Motorlimit.posSPlimit=500;
+        Motorlimit.posSPlimit=1000;
         Motorlimit.isRealseWhenStuck=false;
         Motorlimit.isPosLimitON=false;
         Motorlimit.maxAngle=500;      
         Motorlimit.zeroSP=500;
-        Motorlimit.zeroCurrent=2000;
+        Motorlimit.zeroCurrent=1000;
       
       #ifdef SteeringMotor
         #ifdef PassRobot
@@ -47,18 +48,30 @@ void Motor_Init(void)
     {//电机其他参数设置
         Motorargum.timeoutTicks = 2000;//2000ms
     }
-    /****0号电机初始化****/
-    motor[0].intrinsic=M2006instrin;
-    motor[0].enable=DISABLE;
-    motor[0].begin=false;
-    motor[0].mode=position;
-    motor[0].valueSet.angle=0;
-    motor[0].valueSet.speed=100;
-    motor[0].valueSet.current=100;
-    PID_Init(&motor[0].PIDx, 5, 0.2, 0, 0.4, motor[0].valueSet.pulse);
-    PID_Init(&motor[0].PIDs, 8, 0.3, 0, 1, motor[0].valueSet.speed);
-    motor[0].limit=Motorlimit;
-
+    /****0号电机初始化****/id=0;
+    motor[id].intrinsic=M3508instrin;
+    motor[id].enable=DISABLE;
+    motor[id].begin=true;
+    motor[id].mode=zero;
+    motor[id].valueSet.angle=-3500;
+    motor[id].valueSet.speed=100;
+    motor[id].valueSet.current=100;
+    PID_Init(&motor[id].PIDx, 5, 0.2, 0, 0.4, motor[0].valueSet.pulse);
+    PID_Init(&motor[id].PIDs, 8, 0.3, 0, 1, motor[0].valueSet.speed);
+    motor[id].limit=Motorlimit;
+  
+    /****1号电机初始化****/id=1;
+    motor[id].intrinsic=M3508instrin;
+    motor[id].enable=DISABLE;
+    motor[id].begin=true;
+    motor[id].mode=position;
+    motor[id].valueSet.angle=0;
+    motor[id].valueSet.speed=1000;
+    motor[id].valueSet.current=100;
+    PID_Init(&motor[id].PIDx, 5, 0.2, 0, 0.4, motor[0].valueSet.pulse);
+    PID_Init(&motor[id].PIDs, 8, 0.3, 0, 1, motor[0].valueSet.speed);
+    motor[id].limit=Motorlimit;
+    
     for(int i=0;i<8;i++)
     {
         motor[i].argum=Motorargum;

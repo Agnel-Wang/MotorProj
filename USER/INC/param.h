@@ -72,7 +72,8 @@ typedef struct{
 }ErrorTypeDef;
 
 /****动作执行参数定义****/
-extern bool send_yes;//EPOS测试定时器循环发送
+extern bool VESC_fire;
+extern s32 VESC_fire_speed;
 
 /****结构体定义****/
 extern ErrorTypeDef error;

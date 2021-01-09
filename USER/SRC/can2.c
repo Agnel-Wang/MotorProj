@@ -275,6 +275,8 @@ void CAN2_RX1_IRQHandler(void)
       VESCmotor[id].argum.anglePrv=VESCmotor[id].argum.angleNow;
       if(ABS(VESCmotor[id].argum.distance)>1800) VESCmotor[id].argum.distance -= SIG(VESCmotor[id].argum.distance)*3600;
       VESCmotor[id].valReal.position += VESCmotor[id].argum.distance;
+      //锁点记录
+      if(VESCmotor[id].begin) {VESCmotor[id].argum.lockAngle=VESCmotor[id].valReal.angle;VESCmotor[id].argum.lockPosition=VESCmotor[id].valReal.position;}
 		}
     VESCmotor[id].argum.lastRxTim=OSTimeGet();
 	}

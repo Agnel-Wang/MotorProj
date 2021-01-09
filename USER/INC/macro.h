@@ -12,6 +12,7 @@
  */
 
 #define USE_VESC
+#define USE_DJ
 
 /****电磁阀定义****/
 #define valvePaw 0x01

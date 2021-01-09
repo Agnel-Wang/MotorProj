@@ -126,8 +126,20 @@ static void Task_Motor(void *pdata)
 #endif
   while (1) 
   {
+    //Ä¦²ÁÂÖ·¢Éä
+    if(VESC_fire)
+    {
+      if(motor[1].status.arrived)
+      {
+        VESCmotor[0].valSet.speed=-VESC_fire_speed;VESCmotor[1].valSet.speed=-VESC_fire_speed;
+        OSTimeDly(20000);
+        motor[1].valueSet.angle+=360;
+        VESC_fire=false;
+        OSTimeDly(20000);
+        VESCmotor[0].valSet.speed=0;VESCmotor[1].valSet.speed=0;
+      }
+    }
     OSTimeDly(500);
-    
   }
 }
 

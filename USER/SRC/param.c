@@ -1,5 +1,8 @@
 #include "param.h"
 
+//临时动作标志
+bool VESC_fire=false; 
+s32 VESC_fire_speed=1000;
 void param_Init(void)
 {
     Flag_Init();

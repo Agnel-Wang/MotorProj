@@ -82,6 +82,23 @@ void USART2_IRQHandler(void)
         {
           
         }break;
+        case 0x03://VESC界面
+        {
+          switch (usart.RxBuffer_USART2[5])
+          {
+            case 3:
+                VESC_fire_speed=atof((char*)(&usart.RxBuffer_USART2[7]));
+              break;
+            case 6:
+                VESCmotor[0].enable=true;
+                VESCmotor[1].enable=true;
+              break;
+            case 8:
+                VESC_fire=true;
+              break;
+            default:;
+          }
+        }break;
         case 0x04://DJ界面
         {
           switch (usart.RxBuffer_USART2[5])
@@ -322,9 +339,26 @@ void UsartLCDshow(void)
     {
       
     }break;
-    case 3:
+    case 3:/****VESC界面****/
     {
+    usart.TxBuffer_USART2[i++]=0xee;
+    usart.TxBuffer_USART2[i++]=0xb1;	
+    usart.TxBuffer_USART2[i++]=0x12;	
+    usart.TxBuffer_USART2[i++]=0x00;	
+    usart.TxBuffer_USART2[i++]=0x04;
+
+    usart.TxBuffer_USART2[i++]=0x00;
+    usart.TxBuffer_USART2[i++]=0x04;
+    usart.TxBuffer_USART2[i++]=0x00;
+    sprintf(str_temp,"%d",VESCmotor[0].valSet.speed);
+    usart.TxBuffer_USART2[i++]=strlen(str_temp);
+    strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
+    i += strlen(str_temp);   
     
+    usart.TxBuffer_USART2[i++]=0xff;
+    usart.TxBuffer_USART2[i++]=0xfc;
+    usart.TxBuffer_USART2[i++]=0xff;
+    usart.TxBuffer_USART2[i++]=0xff;      
     }break;
     case 4:/****DJ界面****/
     {

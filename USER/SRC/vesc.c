@@ -1,6 +1,6 @@
 #include "vesc.h"
 
-VESCParam SUNNYSKYinstrin;
+VESCParam SUNNYSKYinstrin,VESC_U10;
 VESCLimit VESClimit;
 VESCArgum VESCargum;
 VESC_MOTOR VESCmotor[4];
@@ -8,55 +8,42 @@ VESC_MOTOR VESCmotor[4];
 //电机参数初始化
 void VESCInit(void)
 {
+  u8 id=0;
 	{//电机内参
 		SUNNYSKYinstrin.POLE_PAIRS=7;
+    VESC_U10.POLE_PAIRS=21;
 	}
 	{//电机限制保护
-
+    VESClimit.isPosLimitOn=false;
+    VESClimit.maxPosition=30000;
+    VESClimit.isPosSPLimitOn=true;
+    VESClimit.posSPlimit=1000;
 	}
 	{//间值参数设置
 		VESCargum.timeoutTicks=2000;//2000ms
     VESCargum.fistPos=true;
 	}
-	/****0号电机初始化****/
-	VESCmotor[0].instrinsic=SUNNYSKYinstrin;
-	VESCmotor[0].enable=DISABLE;
-	VESCmotor[0].begin=ENABLE;
-	VESCmotor[0].mode=RPM;
-	VESCmotor[0].valSet.current=10;
-	VESCmotor[0].valSet.speed=1000;
-	VESCmotor[0].valSet.position=0;
-	VESCmotor[0].valSet.duty=1;
-
-	/****1号电机初始化****/
-	VESCmotor[1].instrinsic=SUNNYSKYinstrin;
-	VESCmotor[1].enable=false;
-	VESCmotor[1].begin=false;
-	VESCmotor[1].mode=RPM;
-	VESCmotor[1].valSet.current=10;
-	VESCmotor[1].valSet.speed=1000;
-	VESCmotor[1].valSet.position=0;
-	VESCmotor[1].valSet.duty=1;
-
-	/****2号电机初始化****/
-	VESCmotor[2].instrinsic=SUNNYSKYinstrin;
-	VESCmotor[2].enable=false;
-	VESCmotor[2].begin=false;
-	VESCmotor[2].mode=RPM;
-	VESCmotor[2].valSet.current=10;
-	VESCmotor[2].valSet.speed=1000;
-	VESCmotor[2].valSet.position=0;
-	VESCmotor[2].valSet.duty=1;
-
-	/****3号电机初始化****/
-	VESCmotor[3].instrinsic=SUNNYSKYinstrin;
-	VESCmotor[3].enable=false;
-	VESCmotor[3].begin=false;
-	VESCmotor[3].mode=RPM;
-	VESCmotor[3].valSet.current=10;
-	VESCmotor[3].valSet.speed=1000;
-	VESCmotor[3].valSet.position=0;
-	VESCmotor[3].valSet.duty=1;
+	/****0号电机初始化****/id=0;
+	VESCmotor[id].instrinsic=VESC_U10;
+	VESCmotor[id].enable=DISABLE;
+	VESCmotor[id].begin=true;
+	VESCmotor[id].mode=RPM;
+	VESCmotor[id].valSet.current=10;
+	VESCmotor[id].valSet.speed=-200;
+	VESCmotor[id].valSet.position=0;
+	VESCmotor[id].valSet.duty=1;
+  PID_Init(&VESCmotor[id].PIDx, 0.1, 0.1, 0, 0, VESCmotor[id].valSet.position);
+  
+	/****1号电机初始化****/id=1;
+	VESCmotor[id].instrinsic=VESC_U10;
+	VESCmotor[id].enable=DISABLE;
+	VESCmotor[id].begin=true;
+	VESCmotor[id].mode=RPM;
+	VESCmotor[id].valSet.current=10;
+	VESCmotor[id].valSet.speed=-200;
+	VESCmotor[id].valSet.position=0;
+	VESCmotor[id].valSet.duty=1;
+  PID_Init(&VESCmotor[id].PIDx, 0.1, 0.1, 0, 0, VESCmotor[id].valSet.position);
 
 	for(int i=0;i<4;i++)
 	{
@@ -68,7 +55,21 @@ void VESCInit(void)
 //VESC状态计算
 void VESC_caculate(VESC_MOTOR* motor)
 {
-  if(motor->status.isSetZero) {motor->status.isSetZero=false;motor->valReal.position=0;}
+  if(motor->status.isSetZero) {motor->status.isSetZero=false;motor->valReal.position=0;}/* 重置零点 */
+  /* 反馈超时判断 */
+  
+}
+
+//位置模式
+void VESC_position_mode(VESC_MOTOR* motor)
+{
+  motor->PIDx.SetVal=motor->valSet.position;
+  if(!motor->begin) motor->PIDx.SetVal=motor->argum.lockPosition;
+  if(!motor->limit.isPosLimitOn) PEAK(motor->PIDx.SetVal,motor->limit.maxPosition);
+  motor->PIDx.CurVal=motor->valReal.position;
+  PID_Operation(&motor->PIDx);
+  motor->valSet.speed=motor->PIDx.Udlt;
+  if(motor->limit.isPosSPLimitOn) PEAK(motor->valSet.speed,motor->limit.posSPlimit);
 }
 
 /** 
