@@ -100,7 +100,7 @@ extern VESC_MOTOR VESCmotor[4];
 
 void VESCInit(void);
 void VESC_caculate(VESC_MOTOR* motor);
-void VESC_position_mode(VESC_MOTOR* motor);
+void VESC_position_mode(u8 id);
 void VESC_Set_Duty_Cycle(u8 controller_ID,float duty_cycle,u8 InConGrpFlag);
 void VESC_Set_Speed(u8 controller_ID,s32 speed,u8 InConGrpFlag);
 void VESC_Set_Current(u8 controller_ID,float current,u8 InConGrpFlag);

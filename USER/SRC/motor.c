@@ -106,7 +106,7 @@ void position_mode(s16 id)
     if(motor[id].limit.isPosLimitON) PEAK(motor[id].PIDx.SetVal,motor[id].argum.maxPulse);
     motor[id].PIDx.CurVal=motor[id].valueReal.pulse;
     PID_Operation(&motor[id].PIDx);
-    motor[id].PIDs.SetVal=motor[id].PIDx.uKS_Coe * motor[id].PIDx.Udlt;
+//    motor[id].PIDs.SetVal=motor[id].PIDx.uKS_Coe * motor[id].PIDx.Udlt;
     if(motor[id].limit.isPosSPLimitOn)  PEAK(motor[id].PIDs.SetVal,motor[id].limit.posSPlimit);
     motor[id].PIDs.CurVal=motor[id].valueReal.speed;
     PID_Operation(&motor[id].PIDs);

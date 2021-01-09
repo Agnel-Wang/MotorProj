@@ -32,7 +32,7 @@ void VESCInit(void)
 	VESCmotor[id].valSet.speed=-200;
 	VESCmotor[id].valSet.position=0;
 	VESCmotor[id].valSet.duty=1;
-  PID_Init(&VESCmotor[id].PIDx, 0.1, 0.1, 0, 0, VESCmotor[id].valSet.position);
+  PID_Init(&VESCmotor[id].PIDx, 0.5, 0.045, 0, 1.01, VESCmotor[id].valSet.position);
   
 	/****1号电机初始化****/id=1;
 	VESCmotor[id].instrinsic=VESC_U10;
@@ -43,7 +43,7 @@ void VESCInit(void)
 	VESCmotor[id].valSet.speed=-200;
 	VESCmotor[id].valSet.position=0;
 	VESCmotor[id].valSet.duty=1;
-  PID_Init(&VESCmotor[id].PIDx, 0.1, 0.1, 0, 0, VESCmotor[id].valSet.position);
+  PID_Init(&VESCmotor[id].PIDx, 0.5, 0.2, 0, 1, VESCmotor[id].valSet.position);
 
 	for(int i=0;i<4;i++)
 	{
@@ -61,15 +61,18 @@ void VESC_caculate(VESC_MOTOR* motor)
 }
 
 //位置模式
-void VESC_position_mode(VESC_MOTOR* motor)
+void VESC_position_mode(u8 id)
 {
-  motor->PIDx.SetVal=motor->valSet.position;
-  if(!motor->begin) motor->PIDx.SetVal=motor->argum.lockPosition;
-  if(!motor->limit.isPosLimitOn) PEAK(motor->PIDx.SetVal,motor->limit.maxPosition);
-  motor->PIDx.CurVal=motor->valReal.position;
-  PID_Operation(&motor->PIDx);
-  motor->valSet.speed=motor->PIDx.Udlt;
-  if(motor->limit.isPosSPLimitOn) PEAK(motor->valSet.speed,motor->limit.posSPlimit);
+  VESCmotor[id].PIDx.SetVal=VESCmotor[id].valSet.position;
+  if(!VESCmotor[id].begin) 
+    VESCmotor[id].PIDx.SetVal=VESCmotor[id].argum.lockPosition;
+  if(VESCmotor[id].limit.isPosLimitOn) 
+    PEAK(motor->PIDx.SetVal,VESCmotor[id].limit.maxPosition);
+  VESCmotor[id].PIDx.CurVal=VESCmotor[id].valReal.position;
+  PID_Operation(&VESCmotor[id].PIDx);
+  if(motor->limit.isPosSPLimitOn) 
+    PEAK(VESCmotor[id].PIDx.Udlt,motor->limit.posSPlimit);
+  VESC_Set_Speed(id+1, VESCmotor[id].PIDx.Udlt * VESCmotor[id].instrinsic.POLE_PAIRS, 0);
 }
 
 /** 

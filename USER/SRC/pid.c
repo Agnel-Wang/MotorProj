@@ -17,6 +17,7 @@ void PID_Operation(PID_setTypeDef* PID)
 {
 	PID->liEkVal[0] = PID->SetVal-PID->CurVal;
 	PID->Udlt=PID->uKP_Coe*(PID->liEkVal[0] - PID->liEkVal[1])+PID->uKI_Coe * PID->liEkVal[0]+PID->uKD_Coe*(PID->liEkVal[0] + PID->liEkVal[2]-PID->liEkVal[1] * 2);
-	PID->liEkVal[2] = PID->liEkVal[1];
+	PID->Udlt*=PID->uKS_Coe;
+  PID->liEkVal[2] = PID->liEkVal[1];
 	PID->liEkVal[1] = PID->liEkVal[0];
 }
