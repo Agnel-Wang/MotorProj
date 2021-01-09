@@ -1,7 +1,7 @@
 #ifndef _MACRO_H_
 #define _MACRO_H_
 
-#include "stdbool.h"
+#include "utils.h"
 #include "stm32f4xx.h"
 
 /* selet progrom functional unit
@@ -12,7 +12,7 @@
  */
 
 #define USE_VESC
-#define USE_DJ
+//#define USE_DJ
 
 /****电磁阀定义****/
 #define valvePaw 0x01
@@ -30,12 +30,6 @@
 #define BIT5 (0x01<<5)
 #define BIT6 (0x01<<6)
 #define BIT7 (0x01<<7)
-
-/* math function */
-#define ABS(x)  ((x)>0? (x):(-(x)))
-#define SIG(x)  ((x < 0) ? -1 : 1)
-#define PEAK(A,B)   if(ABS(A)>B) A=SIG(A)*B; //此处默认B为正值
-#define SQ(x)	((x)*(x))
 
 #define EncodeS32Data(f,buff)	{*(s32*)buff = *f;}
 #define DecodeS32Data(f,buff)	{*f = *(s32 *)buff;}

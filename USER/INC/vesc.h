@@ -16,9 +16,9 @@ typedef struct{
 typedef struct{
 	volatile int16_t current;//电流
 	vs32 speed;//速度
-	volatile float angle;//位置
+	float angle;//位置
   vs32 position;
-	volatile float duty;//占空比
+	float duty;//占空比
 }VESCVal;
 
 /****VESC状态****/
@@ -47,7 +47,8 @@ typedef struct{
   vu16 angleNow;
   vu16 anglePrv;
   float lockAngle;
-  u32 lockPosition;
+  s32 lockPosition;
+  vs32 difPosition;
 }VESCArgum;
 
 /****VESC电机结构体****/
@@ -101,6 +102,7 @@ extern VESC_MOTOR VESCmotor[4];
 void VESCInit(void);
 void VESC_caculate(VESC_MOTOR* motor);
 void VESC_position_mode(u8 id);
+void VESC_angle_mode(u8 id);
 void VESC_Set_Duty_Cycle(u8 controller_ID,float duty_cycle,u8 InConGrpFlag);
 void VESC_Set_Speed(u8 controller_ID,s32 speed,u8 InConGrpFlag);
 void VESC_Set_Current(u8 controller_ID,float current,u8 InConGrpFlag);
