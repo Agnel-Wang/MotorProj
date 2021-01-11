@@ -20,7 +20,7 @@
 extern bool motorSwitchOn;
 
 /****电机模式****/
-enum MOTOR_MODE { duty=0, current, RPM, brake, zero, position, vesc_angle};
+enum MOTOR_MODE { duty=0, current, RPM, brake, zero, position, vesc_postion_rpm, vesc_postion_I ,vesc_RPM_I};
 
 /****电机限制保护结构体****/
 typedef struct{

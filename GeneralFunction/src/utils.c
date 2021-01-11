@@ -100,6 +100,20 @@ int utils_truncate_number_abs(float *number, float max) {
 	return did_trunc;
 }
 
+int utils_truncate_number_abs_s32(s32 *number, s32 max){
+	int did_trunc = 0;
+
+	if (*number > max) {
+		*number = max;
+		did_trunc = 1;
+	} else if (*number < -max) {
+		*number = -max;
+		did_trunc = 1;
+	}
+
+	return did_trunc;
+}
+  
 float utils_map(float x, float in_min, float in_max, float out_min, float out_max) {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

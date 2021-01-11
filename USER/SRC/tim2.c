@@ -36,8 +36,10 @@ void TIM2_IRQHandler(void)
                         case duty:      VESC_Set_Duty_Cycle(i+1, VESCmotor[i].valSet.duty, 0);                                  break;
                         case RPM:       VESC_Set_Speed(i+1, VESCmotor[i].valSet.speed * VESCmotor[i].instrinsic.POLE_PAIRS, 0);  break;
                         case brake:     VESC_Set_Brake_Current(i+1, VESCmotor[i].limit.breakCurrent, 0);                       break;
-                        case position:  VESC_position_mode(i); break;
-                        case vesc_angle:  VESC_angle_mode(i); break;
+                        case position:          VESC_position_mode_pos(i); break;
+                        case vesc_postion_rpm:  VESC_position_mode_rpm(i); break;
+                        case vesc_postion_I:    VESC_position_mode_I(i);   break;
+                        case vesc_RPM_I:        VESC_RPM_mode_I(i);        break;
                       default:break;
                     }
                 }

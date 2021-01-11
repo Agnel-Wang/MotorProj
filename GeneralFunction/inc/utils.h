@@ -2,7 +2,7 @@
 #define UTILS_H_
 
 #include <stdbool.h>
-
+#include "stm32f4xx.h"
 
 #define ABS(x)  ((x)>0? (x):(-(x)))
 #define SIG(x)  ((x < 0) ? -1 : 1)
@@ -41,6 +41,7 @@ void utils_norm_angle_rad(float *angle);
 int utils_truncate_number(float *number, float min, float max);
 int utils_truncate_number_int(int *number, int min, int max);
 int utils_truncate_number_abs(float *number, float max);
+int utils_truncate_number_abs_s32(s32 *number, s32 max);
 float utils_map(float x, float in_min, float in_max, float out_min, float out_max);
 int utils_map_int(int x, int in_min, int in_max, int out_min, int out_max);
 void utils_deadband(float *value, float tres, float max);

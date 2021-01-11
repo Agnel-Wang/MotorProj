@@ -1,5 +1,4 @@
 #include "main.h"
-
 int main(void)
 {
   Delay_ms(3000);//延时启动，等待机构上电

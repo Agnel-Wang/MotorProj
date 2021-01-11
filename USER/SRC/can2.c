@@ -264,7 +264,7 @@ void CAN2_RX1_IRQHandler(void)
     u8 id = rx_message.ExtId&0xff-1;
 		if((rx_message.ExtId>>8)==CAN_PACKET_STATUS)
 		{
-			VESCmotor[id].valReal.speed=(s32)(buffer_32_to_float(rx_message.Data,1e0,&ind)/VESCmotor[rx_message.ExtId&0xff].instrinsic.POLE_PAIRS);
+			VESCmotor[id].valReal.speed=get_s32_from_buffer(rx_message.Data,&ind)/VESCmotor[id].instrinsic.POLE_PAIRS;
 			VESCmotor[id].valReal.current=buffer_16_to_float(rx_message.Data,1e3,&ind);
 			VESCmotor[id].valReal.angle=buffer_16_to_float(rx_message.Data,1e1,&ind);
       //位置计算

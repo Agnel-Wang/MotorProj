@@ -6,15 +6,19 @@
 #include "param.h"
 #include "queue.h"
 #include "canctrllist.h"
+#include <math.h>
+#include "utils.h"
 
 /****VESC内参****/
 typedef struct{
 	u8 POLE_PAIRS;//电机极对数
+  float MAX_CURRENT;
+  s32 MAX_RPM;
 }VESCParam;
 
 /****VESC外参****/
 typedef struct{
-	volatile int16_t current;//电流
+	volatile float current;//电流
 	vs32 speed;//速度
 	float angle;//位置
   vs32 position;
@@ -31,6 +35,7 @@ typedef struct{
 /****VESC限制保护****/
 typedef struct{
 	float breakCurrent;//刹车电流
+  float maxCurrentSet;
   bool isPosLimitOn;//位置限制
   s32 maxPosition;//位置限制的最大位置
   bool isPosSPLimitOn;//位置环速度限制
@@ -55,10 +60,12 @@ typedef struct{
 typedef struct{
 	bool enable;//电机使能
 	bool begin;//电机启动
+  bool Encoder_DIR_inverted;//旋转方向逆转
 	u8 mode;//电机模式
 	VESCVal	valSet,valReal;//外参设定值，实际值，前次值
 	VESCStatus status;//电机状态
-  PID_setTypeDef PIDx;//PID参数
+  PID_setTypeDef PIDx,PIDs;//PID参数
+  VESC_PID_setTypeDef p_pid, s_pid;
 	VESCArgum argum;//间值参数
 	VESCLimit limit;//电机限制保护
 	VESCParam instrinsic;//电机内参
@@ -101,8 +108,10 @@ extern VESC_MOTOR VESCmotor[4];
 
 void VESCInit(void);
 void VESC_caculate(VESC_MOTOR* motor);
-void VESC_position_mode(u8 id);
-void VESC_angle_mode(u8 id);
+void VESC_RPM_mode_I(u8 id);
+void VESC_position_mode_rpm(u8 id);
+void VESC_position_mode_pos(u8 id);
+void VESC_position_mode_I(u8 id);
 void VESC_Set_Duty_Cycle(u8 controller_ID,float duty_cycle,u8 InConGrpFlag);
 void VESC_Set_Speed(u8 controller_ID,s32 speed,u8 InConGrpFlag);
 void VESC_Set_Current(u8 controller_ID,float current,u8 InConGrpFlag);
