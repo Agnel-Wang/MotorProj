@@ -87,6 +87,7 @@ typedef struct{
 }DJmotor;
 
 extern DJmotor motor[8];
+extern MotorParam M2006instrin,M3508instrin,RM6025instrin;
 
 void Motor_Init(void);
 void speed_mode(s16 id);

@@ -147,7 +147,7 @@ static void Task_Scope(void *pdata)
 {
   while (1) 
   {
-    VS4Channal_Send(0, 0, 0, 0);
-    OSTimeDly(300);
+    VS4Channal_Send(motor[5].valueSet.speed, motor[5].valueReal.speed, motor[5].valueSet.angle, motor[5].valueReal.angle);
+    OSTimeDly(70);
   }
 }

@@ -1,8 +1,8 @@
 #include "motor.h"
 
 bool motorSwitchOn=true;
-MotorParam M2006instrin,M3508instrin;
-MotorLimit Motorlimit;
+MotorParam M2006instrin,M3508instrin,RM6025instrin;
+MotorLimit Motorlimit,RMmotorlimit;
 MotorArgum Motorargum;
 DJmotor motor[8];
 
@@ -11,10 +11,10 @@ void Motor_Init(void)
 {
   u8 id=0;
     {//电机内参
-        M2006instrin.PULSE=8192;            M3508instrin.PULSE=8192;
-        M2006instrin.RATIO=36;              M3508instrin.RATIO=19;
-        M2006instrin.CURRENT_LIMIT=9000;    M3508instrin.CURRENT_LIMIT=14745;
-        M2006instrin.GEARRATIO=1;           M3508instrin.GEARRATIO=1;
+        M2006instrin.PULSE=8192;            M3508instrin.PULSE=8192;              RM6025instrin.PULSE=8192;
+        M2006instrin.RATIO=36;              M3508instrin.RATIO=19;                RM6025instrin.RATIO=1;
+        M2006instrin.CURRENT_LIMIT=9000;    M3508instrin.CURRENT_LIMIT=14745;     RM6025instrin.CURRENT_LIMIT=27852;
+        M2006instrin.GEARRATIO=1;           M3508instrin.GEARRATIO=1;             RM6025instrin.GEARRATIO=1;
     }
     {//电机限制保护设置
         Motorlimit.isPosSPLimitOn=true;
@@ -24,6 +24,14 @@ void Motor_Init(void)
         Motorlimit.maxAngle=500;      
         Motorlimit.zeroSP=500;
         Motorlimit.zeroCurrent=1000;
+      
+        RMmotorlimit.isPosSPLimitOn=true;
+        RMmotorlimit.posSPlimit=400;
+        RMmotorlimit.isRealseWhenStuck=false;
+        RMmotorlimit.isPosLimitON=false;
+        RMmotorlimit.maxAngle=500;
+        
+      
       
       #ifdef SteeringMotor
         #ifdef PassRobot
@@ -48,17 +56,17 @@ void Motor_Init(void)
     {//电机其他参数设置
         Motorargum.timeoutTicks = 2000;//2000ms
     }
-    /****0号电机初始化****/id=0;
-    motor[id].intrinsic=M3508instrin;
+    /****0号电机初始化****/id=5;
+    motor[id].intrinsic=RM6025instrin;
     motor[id].enable=DISABLE;
     motor[id].begin=true;
-    motor[id].mode=zero;
-    motor[id].valueSet.angle=-3500;
+    motor[id].mode=RPM;
+    motor[id].valueSet.angle=0;
     motor[id].valueSet.speed=100;
-    motor[id].valueSet.current=100;
-    PID_Init(&motor[id].PIDx, 5, 0.2, 0, 0.4, motor[0].valueSet.pulse);
-    PID_Init(&motor[id].PIDs, 8, 0.3, 0, 1, motor[0].valueSet.speed);
-    motor[id].limit=Motorlimit;
+    motor[id].valueSet.current=0;
+    PID_Init(&motor[id].PIDx, 0.1, 0.2, 0.1, 1, motor[id].valueSet.pulse);
+    PID_Init(&motor[id].PIDs, 10, 10, 0, 1, motor[id].valueSet.speed);
+    motor[id].limit=RMmotorlimit;
   
     /****1号电机初始化****/id=1;
     motor[id].intrinsic=M3508instrin;
@@ -68,8 +76,8 @@ void Motor_Init(void)
     motor[id].valueSet.angle=0;
     motor[id].valueSet.speed=1000;
     motor[id].valueSet.current=100;
-    PID_Init(&motor[id].PIDx, 5, 0.2, 0, 0.4, motor[0].valueSet.pulse);
-    PID_Init(&motor[id].PIDs, 8, 0.3, 0, 1, motor[0].valueSet.speed);
+    PID_Init(&motor[id].PIDx, 5, 0.2, 0, 0.4, motor[id].valueSet.pulse);
+    PID_Init(&motor[id].PIDs, 8, 0.3, 0, 1, motor[id].valueSet.speed);
     motor[id].limit=Motorlimit;
     
     for(int i=0;i<8;i++)
@@ -106,7 +114,7 @@ void position_mode(s16 id)
     if(motor[id].limit.isPosLimitON) PEAK(motor[id].PIDx.SetVal,motor[id].argum.maxPulse);
     motor[id].PIDx.CurVal=motor[id].valueReal.pulse;
     PID_Operation(&motor[id].PIDx);
-//    motor[id].PIDs.SetVal=motor[id].PIDx.uKS_Coe * motor[id].PIDx.Udlt;
+    motor[id].PIDs.SetVal=motor[id].PIDx.uKS_Coe * motor[id].PIDx.Udlt;
     if(motor[id].limit.isPosSPLimitOn)  PEAK(motor[id].PIDs.SetVal,motor[id].limit.posSPlimit);
     motor[id].PIDs.CurVal=motor[id].valueReal.speed;
     PID_Operation(&motor[id].PIDs);
@@ -135,14 +143,13 @@ void zero_mode(s16 id)
 /****位置计算****/
 void pulse_caculate(void)
 {
+  static s32 pulse_RM[8];
 	for(int id=0;id<8;id++)
 	{
-		motor[id].argum.distance=motor[id].valueReal.pulseRead-motor[id].valuePrv.pulseRead;
-        motor[id].valuePrv=motor[id].valueReal;
-        if(ABS(motor[id].argum.distance)>4000) motor[id].argum.distance -= SIG(motor[id].argum.distance)*motor[id].intrinsic.PULSE;
-		motor[id].valueReal.pulse+=motor[id].argum.distance;//累计脉冲计算
-        motor[id].argum.difPulseSet=motor[id].valueReal.pulse-motor[id].valueSet.pulse;//更新误差
-
+    
+        if(motor[id].intrinsic.CURRENT_LIMIT==RM6025instrin.CURRENT_LIMIT)
+          motor[id].valueReal.speed=(motor[id].valueReal.pulse-pulse_RM[id])*100*60/motor[id].intrinsic.PULSE;
+        pulse_RM[id]=motor[id].valueReal.pulse;
         /* 判断是否堵转 */
         /*TODO: 使用电流判断堵转绝对是不对的，之后需要改为速度，*/
         if(motor[id].enable&&(ABS(motor[id].valueSet.current-motor[id].intrinsic.CURRENT_LIMIT)>50))//电流时刻保持限值

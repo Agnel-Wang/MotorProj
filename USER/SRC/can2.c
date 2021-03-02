@@ -185,9 +185,24 @@ void CAN2_RX0_IRQHandler(void)
         ChangeData(&rx_message.Data[0],&rx_message.Data[1]);
         ChangeData(&rx_message.Data[2],&rx_message.Data[3]);
         ChangeData(&rx_message.Data[4],&rx_message.Data[5]);
-        DecodeS16Data(&motor[id].valueReal.pulseRead,&rx_message.Data[0]);
-        DecodeS16Data(&motor[id].valueReal.speed,&rx_message.Data[2]);
-        DecodeS16Data(&motor[id].valueReal.current,&rx_message.Data[4]);
+        if(motor[id].intrinsic.CURRENT_LIMIT == RM6025instrin.CURRENT_LIMIT)
+        {
+          DecodeS16Data(&motor[id].valueReal.pulseRead,&rx_message.Data[0]);
+          DecodeS16Data(&motor[id].valueReal.current,&rx_message.Data[2]);
+        }
+        else
+        {
+          DecodeS16Data(&motor[id].valueReal.pulseRead,&rx_message.Data[0]);
+          DecodeS16Data(&motor[id].valueReal.speed,&rx_message.Data[2]);
+          DecodeS16Data(&motor[id].valueReal.current,&rx_message.Data[4]);
+        }
+        
+        motor[id].argum.distance=motor[id].valueReal.pulseRead-motor[id].valuePrv.pulseRead;
+        motor[id].valuePrv=motor[id].valueReal;
+        if(ABS(motor[id].argum.distance)>4000) motor[id].argum.distance -= SIG(motor[id].argum.distance)*motor[id].intrinsic.PULSE;
+        motor[id].valueReal.pulse+=motor[id].argum.distance;//累计脉冲计算
+        motor[id].argum.difPulseSet=motor[id].valueReal.pulse-motor[id].valueSet.pulse;//更新误差
+        
         motor[id].valueReal.angle=motor[id].valueReal.pulse*360.f/(double)(motor[id].intrinsic.RATIO)/motor[id].intrinsic.PULSE/motor[id].intrinsic.GEARRATIO;
         motor[id].argum.lastRxTim=OSTimeGet();
     }
