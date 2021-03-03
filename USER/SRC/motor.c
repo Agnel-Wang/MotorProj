@@ -30,8 +30,6 @@ void Motor_Init(void)
         RMmotorlimit.isRealseWhenStuck=false;
         RMmotorlimit.isPosLimitON=false;
         RMmotorlimit.maxAngle=500;
-        
-      
       
       #ifdef SteeringMotor
         #ifdef PassRobot
@@ -60,9 +58,9 @@ void Motor_Init(void)
     motor[id].intrinsic=RM6025instrin;
     motor[id].enable=DISABLE;
     motor[id].begin=true;
-    motor[id].mode=RPM;
-    motor[id].valueSet.angle=0;
-    motor[id].valueSet.speed=100;
+    motor[id].mode=position;
+    motor[id].valueSet.angle=360;
+    motor[id].valueSet.speed=0;
     motor[id].valueSet.current=0;
     PID_Init(&motor[id].PIDx, 0.1, 0.2, 0.1, 1, motor[id].valueSet.pulse);
     PID_Init(&motor[id].PIDs, 10, 10, 0, 1, motor[id].valueSet.speed);
