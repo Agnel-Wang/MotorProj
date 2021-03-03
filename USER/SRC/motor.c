@@ -146,7 +146,7 @@ void pulse_caculate(void)
 	{
     
         if(motor[id].intrinsic.CURRENT_LIMIT==RM6025instrin.CURRENT_LIMIT)
-          motor[id].valueReal.speed=(motor[id].valueReal.pulse-pulse_RM[id])*100*60/motor[id].intrinsic.PULSE;
+          motor[id].valueReal.speed=(double)(motor[id].valueReal.pulse-pulse_RM[id])*100*60/motor[id].intrinsic.PULSE;
         pulse_RM[id]=motor[id].valueReal.pulse;
         /* 判断是否堵转 */
         /*TODO: 使用电流判断堵转绝对是不对的，之后需要改为速度，*/

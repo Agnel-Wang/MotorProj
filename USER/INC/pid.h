@@ -12,9 +12,9 @@ typedef struct
   volatile float uKI_Coe;  //积分常数
   volatile float uKD_Coe;  //微分常数
   volatile float uKS_Coe;  //速度降系
-  volatile s32 Udlt;       //pid增量值
-  volatile s32 CurVal;     //实际值
-  volatile s32 liEkVal[3]; //差值保存，给定和反馈的差值
+  volatile double Udlt;       //pid增量值
+  volatile double CurVal;     //实际值
+  volatile double liEkVal[3]; //差值保存，给定和反馈的差值
 } PID_setTypeDef;
 
 typedef struct

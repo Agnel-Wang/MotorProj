@@ -27,7 +27,7 @@ typedef struct{
     bool isPosLimitON;//是否对最大位置进行限制，(轴前角度)
     float maxAngle;//最大旋转角度
     bool isPosSPLimitOn;//是否对位置模式进行限速
-    u16 posSPlimit;//位置模式下的速度限制
+    double posSPlimit;//位置模式下的速度限制
     bool isRealseWhenStuck;//是否堵转时释放电机
     s16 zeroSP;//寻零模式下的速度
     u16 zeroCurrent;//寻零模式下的最大电流
@@ -45,7 +45,7 @@ typedef struct{
 typedef struct{
     vs16 angle;//轴前角度
     vs16 current;//电流
-    vs16 speed;//速度 (rpm)
+    volatile double speed;//速度 (rpm)
     vs32 pulse;//累计脉冲
     vs16 pulseRead;//反馈脉冲
 }MotorValue;
