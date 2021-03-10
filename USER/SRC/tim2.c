@@ -71,7 +71,7 @@ void TIM2_IRQHandler(void)
 #endif
 #ifdef USE_EPOS
   EposAskStatus();
-  EposAction();
+  ElmoAction();
 #endif
     }
     TIM2->SR &= ~(1<<0);//清除中断标志位
@@ -107,16 +107,99 @@ void ElmoAskStatus(void)
 /* ELMO执行动作计算 */
 void ElmoAction(void)
 {
+<<<<<<< HEAD
   
   
+=======
+  #ifdef ActionMotor
+#ifdef TryRobot
+  for(int i=0; i<2; i++)
+  {
+    if(kick[i].init)
+    {   
+      kick[i].init=false;
+      kick[i].cnt=0;
+      UM(i+1, SetData, 0, ELMOmotor[i].mode);
+      PX(i+1, SetData, 0, 0);
+      SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
+      kick[i].cnt++;
+      ELMOmotor[i].valSet.angle= kick[i].cnt*360;
+    }
+    if(ELMOmotor[i].enable)
+    {
+      if(ABS(ELMOmotor[i].valReal.angle-ELMOmotor[i].valSet.angle)<10)
+      {
+        if(++kick[i].cnt>KickTimes)
+          kick[i].ok=true;
+        else
+        {
+          ELMOmotor[i].valSet.angle=kick[i].cnt*360;
+          if(kick[i].isAutoKick)
+          {
+            if(kick[i].waitCnt++>kick[i].waittime)
+            {
+              kick[i].waitCnt=0;
+              PA(i+1, SetData, 0, ELMOmotor[i].valSet.angle);
+              BG(i+1, 0);
+            }
+          }
+        }
+      }
+    }
+  }
+#elif defined PassRobot
+  for(int i=0; i<3; i++)
+  {
+    if(kick[i].init)
+    {
+      kick[i].init=false;
+      kick[i].cnt=0;
+      UM(i+1, SetData, 0, ELMOmotor[i].mode);
+      PX(i+1, SetData, 0, 0);
+      SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
+      kick[i].cnt++;
+      ELMOmotor[i].valSet.angle=kick[i].cnt*720;
+    }
+    if(ELMOmotor[i].enable)
+    {
+      if(!kick[i].prepareOK)
+      {
+        if(ABS(ELMOmotor[i].valReal.angle-preparePOS)<10)
+        {
+          kick[i].prepareOK=true;
+          SP(i+1, SetData, 0, ELMOmotor[i].valSet.speed);
+        }
+      }
+      if(kick[i].prepareOK&&(ABS(ELMOmotor[i].valReal.angle-ELMOmotor[i].valSet.angle)<10))
+      {
+        kick[i].cnt++;
+          ELMOmotor[i].valSet.angle=kick[i].cnt*1440;
+      }
+    }
+  }
+#endif
+#endif
+>>>>>>> parent of 8ce78a5 (2020-V.final)
 }
 
 void EposAskStatus(void)
 {
+<<<<<<< HEAD
+=======
+  if(AskTimeCnt++>3)
+  {
+    AskTimeCnt=0;
+    
+  }
+>>>>>>> parent of 8ce78a5 (2020-V.final)
   
 }
 
 void EposAction()
 {
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> parent of 8ce78a5 (2020-V.final)
 }

@@ -35,6 +35,7 @@ static void Task_Start(void *pdata)
 	OSTaskCreate(Task_Flag, (void *)0,(OS_STK *)&FLAG_TASK_STK[FLAG_STK_SIZE - 1], FLAG_TASK_PRIO);
 	OSTaskCreate(Task_Motor, (void *)0, (OS_STK *)&MOTOR_TASK_STK[MOTOR_STK_SIZE - 1],MOTOR_TASK_PRIO);
 	OSTaskCreate(Task_Scope, (void *)0,(OS_STK *)&SCOPE_TASK_STK[SCOPE_STK_SIZE - 1], SCOPE_TASK_PRIO);
+<<<<<<< HEAD
     OSTimeDly(100);
   /****初始工作****/
   
@@ -47,6 +48,44 @@ static void Task_Start(void *pdata)
 	Beep_Show(2);//上电提醒，初始完成
     OSTaskSuspend(START_TASK_PRIO); //挂起起始任务
     OS_EXIT_CRITICAL();             //退出临界区
+=======
+	//Beep_Show(2);//上电提醒
+#ifdef SteeringMotor//电机使能放在这里以消除初始误差
+  #if ID_SELF==MOTOR_0_3  //ELMO/EPOS连接判断
+    #ifdef USE_ELMO
+      NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);
+      for(int i=0;i<20;i++)
+      {
+        MO_CAN1(0,SetData,1);
+        OSTimeDly(100);
+      }
+      if(ELMOmotor[0].enable&&ELMOmotor[1].enable&&ELMOmotor[2].enable&&ELMOmotor[3].enable)
+      {
+        MO_CAN1(0,SetData,0);
+        MO_CAN1(0,SetData,0);
+      }
+      else  insertError(error.head, ELMOERROR|((id+1)<<4)|TIMEOUT);
+    #elif defined USE_EPOS
+      
+    #endif
+    motor[0].enable=ENABLE;motor[3].enable=ENABLE;
+  #elif ID_SELF==MOTOR_1_2
+    motor[1].enable=ENABLE;motor[2].enable=ENABLE;
+  #elif ID_SELF==MOTOR_all
+    motor[0].enable=ENABLE;motor[1].enable=ENABLE;motor[2].enable=ENABLE;
+  #elif ID_SELF == MOROE_4_and_2
+    motor[0].enable=ENABLE;motor[1].enable=ENABLE;motor[2].enable=ENABLE;motor[3].enable=ENABLE;
+    //motor[4].enable=ENABLE;motor[5].enable=ENABLE;
+  #endif
+#else
+  #if defined USE_ELMO | defined USE_EPOS
+  NMT_Operational(CAN2);OSTimeDly(5);NMT_Operational(CAN2);OSTimeDly(5);NMT_Operational(CAN2);OSTimeDly(5);
+  #endif
+#endif
+	Led8DisData(0);
+  OSTaskSuspend(START_TASK_PRIO); //挂起起始任务
+  OS_EXIT_CRITICAL();             //退出临界区
+>>>>>>> parent of 8ce78a5 (2020-V.final)
 }
 
 // LCD任务
@@ -100,6 +139,7 @@ static void Task_Flag(void *pdata)
 static void Task_Motor(void *pdata) 
 {
   pdata = pdata;
+<<<<<<< HEAD
   NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);
 #ifdef USE_ELMO
   for(int i=0;i<50;i++)
@@ -138,6 +178,52 @@ static void Task_Motor(void *pdata)
         VESCmotor[0].valSet.speed=0;VESCmotor[1].valSet.speed=0;
       }
     }
+=======
+
+/*
+ *   0: 无动作
+ *   1：返回取球
+ *   2: 下压
+ */
+  u8 pawAction=0;
+  bool pawActionOK;
+  
+  while (1) 
+  {
+#ifdef PassRobot
+    #ifdef SteeringMotor
+      if(pawAction==1)//回零，取球
+      {
+        motor[4].valueSet.angle=0;motor[5].valueSet.angle=0;
+        motor[4].limit.posSPlimit=2000;motor[4].limit.posSPlimit=2000;
+        motor[4].begin=true;motor[5].begin=true;
+        pawAction=0;
+      }
+      else if(pawAction==2)//放球
+      {
+        motor[4].valueSet.angle=backPos;motor[5].valueSet.angle=backPos;
+        motor[4].limit.posSPlimit=2000;motor[4].limit.posSPlimit=2000;
+        if(ABS(motor[4].valueSet.angle-motor[4].valueReal.angle)<30)
+        {
+          motor[4].limit.posSPlimit=500;motor[4].limit.posSPlimit=500;
+        }
+        if(motor[4].status.stuck||motor[4].status.stuck)
+        {
+          motor[4].begin=false;motor[5].begin=false;
+          pawAction=0;
+        }
+      }
+    #elif defined ActionMotor
+    
+    #endif
+#elif defined TryRobot  
+    #ifdef SteeringMotor
+    
+    #elif defined ActionMotor
+    
+    #endif  
+#endif
+>>>>>>> parent of 8ce78a5 (2020-V.final)
     OSTimeDly(500);
   }
 }
@@ -147,7 +233,12 @@ static void Task_Scope(void *pdata)
 {
   while (1) 
   {
+<<<<<<< HEAD
     VS4Channal_Send(motor[5].valueSet.speed, motor[5].valueReal.speed, motor[5].valueSet.angle, motor[5].valueReal.angle);
     OSTimeDly(70);
+=======
+    VS4Channal_Send(ELMOmotor[0].valReal.speed,0, 0, 0);
+    OSTimeDly(300);
+>>>>>>> parent of 8ce78a5 (2020-V.final)
   }
 }

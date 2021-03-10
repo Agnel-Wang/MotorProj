@@ -10,7 +10,7 @@ void ELMO_Motor_Init(void)
 {
 	{//电机内参
 		Flat90.PULSE=16384;		Flat90.RATIO=1;
-		U10.PULSE=16384;		U10.RATIO=1;
+		U10.PULSE=16384*2;		U10.RATIO=1;
     	EC_4P_22.PULSE=4000;  	EC_4P_22.RATIO=3.7f;//MAXON Gear 166930
 		EC_4P_30.PULSE=4000;	EC_4P_30.RATIO=169.f/9;
 	}
@@ -65,7 +65,7 @@ void ELMO_Motor_Init(void)
 	ELMOmotor[0].enable=DISABLE;
 	ELMOmotor[0].mode=position;
     ELMOmotor[0].valSet.angle=360;
-    ELMOmotor[0].valSet.speed=2000;
+    ELMOmotor[0].valSet.speed=4500;
     ELMOmotor[0].valSet.current=100;
 
 	/****1号电机初始化****/
@@ -73,7 +73,7 @@ void ELMO_Motor_Init(void)
 	ELMOmotor[1].enable=DISABLE;
 	ELMOmotor[1].mode=position;
     ELMOmotor[1].valSet.angle=360;
-    ELMOmotor[1].valSet.speed=2000;
+    ELMOmotor[1].valSet.speed=4500;
     ELMOmotor[1].valSet.current=100;
 	
 	/****2号电机初始化****/
@@ -81,7 +81,7 @@ void ELMO_Motor_Init(void)
 	ELMOmotor[2].enable=DISABLE;
 	ELMOmotor[2].mode=position;
     ELMOmotor[2].valSet.angle=360;
-    ELMOmotor[2].valSet.speed=2000;
+    ELMOmotor[2].valSet.speed=3000;
     ELMOmotor[2].valSet.current=100;
 	#elif defined TryRobot
 	/****0号电机初始化****/

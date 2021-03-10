@@ -36,6 +36,7 @@ void CAN1_Configuration(void)
   CAN_Init(CAN1, &CAN_InitStructure);      //初始化CAN1
 
   /* CAN filter init */
+<<<<<<< HEAD
   CAN_FilterInitStructure.CAN_FilterNumber = 2;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
@@ -43,30 +44,45 @@ void CAN1_Configuration(void)
 	CAN_FilterInitStructure.CAN_FilterIdLow = Elmo_Motor2_TX<< 5;
 	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =Elmo_Motor3_TX << 5;
 	CAN_FilterInitStructure.CAN_FilterMaskIdLow =Elmo_Motor4_TX << 5;
+=======
+#ifdef SteeringMotor
+  CAN_FilterInitStructure.CAN_FilterNumber = 0;
+	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
+	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+  #if ID_SELF == MOTOR_0_3
+  CAN_FilterInitStructure.CAN_FilterIdHigh =0X305<< 5;
+  CAN_FilterInitStructure.CAN_FilterIdLow =0X308 << 5;
+  CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0x320 << 5;
+  CAN_FilterInitStructure.CAN_FilterMaskIdLow =0 << 5;
+  #elif ID_SELF == MOTOR_1_2
+  CAN_FilterInitStructure.CAN_FilterIdHigh =0X306 << 5;
+  CAN_FilterInitStructure.CAN_FilterIdLow =0X307 << 5;
+  CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0x320 << 5;
+  CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x309 << 5;
+  #elif ID_SELF == MOTOR_all
+	CAN_FilterInitStructure.CAN_FilterIdHigh =0X305<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = 0X306<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X307 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0X320 << 5;
+  #elif ID_SELF == MOROE_4_and_2
+	CAN_FilterInitStructure.CAN_FilterIdHigh =0X305<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = 0X306<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X307 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0X308 << 5;
+  #endif
+>>>>>>> parent of 8ce78a5 (2020-V.final)
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
 
   #if ID_SELF == MOROE_4_and_2
-  
-  CAN_FilterInitStructure.CAN_FilterNumber = 4;
+  CAN_FilterInitStructure.CAN_FilterNumber = 3;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh =0X305<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = 0X306<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X307 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x308<< 5;
-  CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-  CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-  CAN_FilterInit(&CAN_FilterInitStructure);
-  
-  CAN_FilterInitStructure.CAN_FilterNumber = 5;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh =0X309<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = 0X310<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X320 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x321<< 5;
+  CAN_FilterInitStructure.CAN_FilterIdHigh =0X320<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = 0X301<< 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X302 << 5;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x303<< 5;
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
@@ -74,7 +90,7 @@ void CAN1_Configuration(void)
   
   #if ID_SELF == MOTOR_0_3
   #ifdef USE_ELMO
-	CAN_FilterInitStructure.CAN_FilterNumber = 3;
+	CAN_FilterInitStructure.CAN_FilterNumber = 1;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
 	CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor1_RX<< 5;
@@ -85,7 +101,7 @@ void CAN1_Configuration(void)
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
   #elif defined USE_EPOS
-	CAN_FilterInitStructure.CAN_FilterNumber = 3;
+	CAN_FilterInitStructure.CAN_FilterNumber = 1;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
 	CAN_FilterInitStructure.CAN_FilterIdHigh =EPOS_Motor1_RX<< 5;
@@ -96,7 +112,7 @@ void CAN1_Configuration(void)
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
   
- 	CAN_FilterInitStructure.CAN_FilterNumber = 4;
+ 	CAN_FilterInitStructure.CAN_FilterNumber = 2;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
 	CAN_FilterInitStructure.CAN_FilterIdHigh =EPOS_Motor1_Init<< 5;
@@ -109,7 +125,7 @@ void CAN1_Configuration(void)
   #endif
   #endif
 #ifdef ActionMotor
-  CAN_FilterInitStructure.CAN_FilterNumber = 2; //屏蔽位模式
+  CAN_FilterInitStructure.CAN_FilterNumber = 0; //屏蔽位模式
   CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
   CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
   CAN_FilterInitStructure.CAN_FilterIdHigh = ((ID_SELF << 3) & 0xFFFF0000) >> 16;
@@ -120,7 +136,7 @@ void CAN1_Configuration(void)
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
 
-  CAN_FilterInitStructure.CAN_FilterNumber = 3; //屏蔽位模式
+  CAN_FilterInitStructure.CAN_FilterNumber = 1; //屏蔽位模式
   CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
   CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
   CAN_FilterInitStructure.CAN_FilterIdHigh =((BROADCAST_ID << 3) & 0xFFFF0000) >> 16;
@@ -141,7 +157,30 @@ void CAN1_Configuration(void)
   CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
 }
 
-static void answer_master(CanRxMsg *rx_message);
+/****接收反馈原报文****/
+static void answer_master(CanRxMsg *rx_message)
+{
+  CanTxMsg tx_message;
+  if (!(CAN_Procedure.status & BIT0) || (CAN_Procedure.status & BIT1) || !(CAN_Procedure.status & BIT2)) 
+  {
+    if(rx_message->IDE == CAN_Id_Standard)
+    {
+      tx_message.IDE = CAN_Id_Standard;
+      tx_message.StdId = rx_message->StdId - 0x80;
+    }
+    #ifdef ActionMotor
+    else if(rx_message->IDE == CAN_Id_Extended)
+    {
+      tx_message.IDE = CAN_Id_Extended;
+      tx_message.ExtId = ID_BACK;
+    }
+    #endif
+    tx_message.RTR = CAN_RTR_Data;
+    tx_message.DLC = rx_message->DLC;
+    memcpy(&rx_message->Data[0],&rx_message->Data[0],rx_message->DLC);
+    CAN_Transmit(CAN1, &tx_message);
+  }
+}
 
 #ifdef SteeringMotor
 /****反馈电机角度****/
@@ -156,7 +195,7 @@ static void feedbackAngle(u16 motorID)
   tx_message.Data[1] = 'B';
   tx_message.Data[2] = 'G';
   u8 id = motorID - 0x305;
-  s16TempData[id]=motor[id].valueReal.angle*30.f;
+  s16TempData[id]=motor[id].valueReal.angle*30.f/GearRatio;
   EncodeS16Data(&s16TempData[id], &tx_message.Data[3]);
   CAN_Transmit(CAN1, &tx_message);
 }
@@ -238,7 +277,7 @@ void CAN1_RX0_IRQHandler(void)
           else if(rx_message.Data[0] == 'C' && rx_message.Data[1] == 'H')//旋转
           {
             DecodeS16Data(&s16TempData[SteeringID],&rx_message.Data[2]);
-            motor[SteeringID].valueSet.angle = -s16TempData[SteeringID]/30.f;
+            motor[SteeringID].valueSet.angle = -s16TempData[SteeringID]/30.f*GearRatio;
             motor[SteeringID].begin=true;
           }
           else if(rx_message.Data[0]=='S'&&rx_message.Data[1]=='P')//速度设定
@@ -270,10 +309,6 @@ void CAN1_RX0_IRQHandler(void)
             feedbackAngle(rx_message.StdId);
           }
         }
-        if(rx_message.StdId==0x309)
-        {
-          pawAction=rx_message.Data[0]+1;
-        }
         if(rx_message.StdId==0x320)
         {
             DecodeS16Data(&s16TempData[0], &rx_message.Data[0]);
@@ -298,13 +333,13 @@ void CAN1_RX0_IRQHandler(void)
             motor[2].valueSet.angle = s16TempData[2]/30.f*GearRatio;
             motor[2].begin=true;motor[2].mode=position;
           #elif ID_SELF==MOROE_4_and_2
-            motor[0].valueSet.angle = -s16TempData[0]/30.f;
+            motor[0].valueSet.angle = -s16TempData[0]/30.f*GearRatio;
             motor[0].begin=true;motor[0].mode=position;
-            motor[1].valueSet.angle = -s16TempData[1]/30.f;
+            motor[1].valueSet.angle = -s16TempData[1]/30.f*GearRatio;
             motor[1].begin=true;motor[1].mode=position;
-            motor[2].valueSet.angle = -s16TempData[2]/30.f;
+            motor[2].valueSet.angle = -s16TempData[2]/30.f*GearRatio;
             motor[2].begin=true;motor[2].mode=position;
-            motor[3].valueSet.angle = -s16TempData[3]/30.f;
+            motor[3].valueSet.angle = s16TempData[2]/30.f*GearRatio;
             motor[3].begin=true;motor[3].mode=position;
           #endif
             answer_master(&rx_message);
@@ -338,57 +373,15 @@ void CAN1_RX0_IRQHandler(void)
         if((rx_message.Data[1]=='C')&&(rx_message.Data[2]=='W')&&(rx_message.Data[3]=='H')&&(rx_message.Data[4]=='U'))
           answer_master(&rx_message);
       }
-      if(rx_message.Data[0]==0x03)//机构ID
+      if(rx_message.Data[0]==0x03)
       {
       #ifdef PassRobot
-        if((rx_message.Data[1]==('W'+0x40))&&(rx_message.Data[2]=='I')&&(rx_message.Data[3]=='N'))
-        {
-          DecodeS16Data(&ELMOmotor[rx_message.Data[6]-1].valSet.speed, &rx_message.Data[4]);
-          kick[rx_message.Data[6]-1].begin=true;
-          answer_master(&rx_message);
-        }
+
       #elif defined TryRobot
 
       #endif
       }
-      if(rx_message.Data[0]==0x04)
-      {
-        if((rx_message.Data[1]==('S'+0x40))&&(rx_message.Data[2]=='N'))//气缸开
-        {
-          flag.valve[rx_message.Data[3]-1]=1;
-        }
-        else if((rx_message.Data[1]==('E'+0x40))&&(rx_message.Data[2]=='F'))//气缸关
-        {
-          flag.valve[rx_message.Data[3]-1]=0;
-        }
-      }
     }
     #endif
-  }
-}
-  
-/****接收反馈原报文****/
-static void answer_master(CanRxMsg *rx_message)
-{
-  CanTxMsg tx_message;
-  if (!(CAN_Procedure.status & BIT0) || (CAN_Procedure.status & BIT1) || !(CAN_Procedure.status & BIT2)) 
-  {
-    if(rx_message->IDE == CAN_Id_Standard)
-    {
-      tx_message.IDE = CAN_Id_Standard;
-      tx_message.StdId = rx_message->StdId - 0x80;
-    }
-    #ifdef ActionMotor
-    else if(rx_message->IDE == CAN_Id_Extended)
-    {
-      tx_message.IDE = CAN_Id_Extended;
-      tx_message.ExtId = ID_BACK;
-    }
-    #endif
-    tx_message.RTR = CAN_RTR_Data;
-    tx_message.DLC = rx_message->DLC;
-    memcpy(&tx_message.Data[0],&rx_message->Data[0],rx_message->DLC);
-    tx_message.Data[0] += 0x40;
-    CAN_Transmit(CAN1, &tx_message);
   }
 }

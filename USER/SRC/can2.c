@@ -126,40 +126,6 @@ void CAN2_Configuration()
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
-  //EPOS过滤器
-	CAN_FilterInitStructure.CAN_FilterNumber = 21;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =EPOS_Motor1_RX<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = EPOS_Motor2_RX<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =EPOS_Motor4_RX << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =EPOS_Motor4_RX << 5;
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO1;
-	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-	CAN_FilterInit(&CAN_FilterInitStructure);
-  
-  //CAN紧急报错
-  CAN_FilterInitStructure.CAN_FilterNumber = 22;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =CAN_EMERGENCY1<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = CAN_EMERGENCY2<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =CAN_EMERGENCY3 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =CAN_EMERGENCY4 << 5;
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO1;
-	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-	CAN_FilterInit(&CAN_FilterInitStructure);
-  
-  CAN_FilterInitStructure.CAN_FilterNumber = 23;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =CAN_EMERGENCY5<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = CAN_EMERGENCY6<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =CAN_EMERGENCY7 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =CAN_EMERGENCY8 << 5;
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO1;
-	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-	CAN_FilterInit(&CAN_FilterInitStructure);
 #ifdef USE_DJ
 	CAN_ITConfig(CAN2,CAN_IT_FMP0, ENABLE);
 #endif
@@ -185,6 +151,7 @@ void CAN2_RX0_IRQHandler(void)
         ChangeData(&rx_message.Data[0],&rx_message.Data[1]);
         ChangeData(&rx_message.Data[2],&rx_message.Data[3]);
         ChangeData(&rx_message.Data[4],&rx_message.Data[5]);
+<<<<<<< HEAD
         if(motor[id].intrinsic.CURRENT_LIMIT == RM6025instrin.CURRENT_LIMIT)
         {
           DecodeS16Data(&motor[id].valueReal.pulseRead,&rx_message.Data[0]);
@@ -204,6 +171,12 @@ void CAN2_RX0_IRQHandler(void)
         motor[id].argum.difPulseSet=motor[id].valueReal.pulse-motor[id].valueSet.pulse;//更新误差
         
         motor[id].valueReal.angle=motor[id].valueReal.pulse*360.f/(double)(motor[id].intrinsic.RATIO)/motor[id].intrinsic.PULSE/motor[id].intrinsic.GEARRATIO;
+=======
+        DecodeS16Data(&motor[id].valueReal.pulseRead,&rx_message.Data[0]);
+        DecodeS16Data(&motor[id].valueReal.speed,&rx_message.Data[2]);
+        DecodeS16Data(&motor[id].valueReal.current,&rx_message.Data[4]);
+        motor[id].valueReal.angle=motor[id].valueReal.pulse*360.f/motor[id].intrinsic.RATIO/motor[id].intrinsic.PULSE;
+>>>>>>> parent of 8ce78a5 (2020-V.final)
         motor[id].argum.lastRxTim=OSTimeGet();
     }
   }
@@ -246,7 +219,10 @@ void CAN2_RX1_IRQHandler(void)
 			Elmo_Feedback_Deel(&Can2_MesgSentList[id]);
 		if(rx_message.Data[0]=='M'&&rx_message.Data[1]=='O'&&(rx_message.Data[3]&BIT6)!=1)
 		{
+<<<<<<< HEAD
       if(ABS(rx_message.Data[4])<0x02)//20.09.26 暂时先这样根据大小判断一下
+=======
+>>>>>>> parent of 8ce78a5 (2020-V.final)
 			ELMOmotor[id].enable=rx_message.Data[4];
 		}
 		if(rx_message.Data[0]=='V'&&rx_message.Data[1]=='X'&&(rx_message.Data[3]&BIT6)!=1)
@@ -273,7 +249,7 @@ void CAN2_RX1_IRQHandler(void)
   }
 #endif
 #ifdef USE_VESC
-	if((rx_message.IDE == CAN_ID_EXT)&&(rx_message.RTR == CAN_RTR_Data))
+	if((rx_message.IDE == CAN_ID_EXT)&&(rx_message.RTR == CAN_RTR_Data))//VESC报文处理
 	{
 		int32_t ind=0;
     u8 id = rx_message.ExtId&0xff-1;
@@ -301,16 +277,6 @@ void CAN2_RX1_IRQHandler(void)
     VESCmotor[id].argum.lastRxTim=OSTimeGet();
 	}
 #endif
-#ifdef USE_EPOS
-    if((rx_message.IDE == CAN_ID_EXT)&&(rx_message.RTR == CAN_RTR_Data))
-    {
-      u8 id = rx_message.StdId-0x581;
-      if(rx_message.Data[0]==0x4B&&rx_message.Data[1]==0x41&&rx_message.Data[2]==0x60)
-      {
-        DecodeS32Data(&EPOSmotor[id].status.statusword,&rx_message.Data[4]);
-      }
-    }
-#endif
   }
 }
 
@@ -318,17 +284,17 @@ static CanTxMsg DJ_tx_message;
 /****DJ电机电流输入****/
 void currentInput(u8 id)
 {
-  PEAK(motor[id].valueSet.current,motor[id].intrinsic.CURRENT_LIMIT);
-  if(!motor[id].enable) motor[id].valueSet.current=0;
-  if (id < 4) DJ_tx_message.StdId = 0x200;
-  else DJ_tx_message.StdId = 0x1FF;
-  DJ_tx_message.RTR = CAN_RTR_Data;
-  DJ_tx_message.IDE = CAN_Id_Standard;
-  DJ_tx_message.DLC = 8;
-  u8 temp=2*(id&0x0B);
-  EncodeS16Data(&motor[id].valueSet.current,&DJ_tx_message.Data[temp]);
-  ChangeData(&DJ_tx_message.Data[temp],&DJ_tx_message.Data[temp+1]);
-  if((id==3)||(id==7)) CAN_Transmit(CAN2, &DJ_tx_message);
+    PEAK(motor[id].valueSet.current,motor[id].intrinsic.CURRENT_LIMIT);
+    if(!motor[id].enable) motor[id].valueSet.current=0;
+    if (id < 4) DJ_tx_message.StdId = 0x200;
+    else DJ_tx_message.StdId = 0x1FF;
+    DJ_tx_message.RTR = CAN_RTR_Data;
+    DJ_tx_message.IDE = CAN_Id_Standard;
+    DJ_tx_message.DLC = 8;
+	u8 temp=2*(id&0x0B);
+	EncodeS16Data(&motor[id].valueSet.current,&DJ_tx_message.Data[temp]);
+	ChangeData(&DJ_tx_message.Data[temp],&DJ_tx_message.Data[temp+1]);
+	if((id==3)||(id==7)) CAN_Transmit(CAN2, &DJ_tx_message);
 }
 
 /****电磁阀控制****/

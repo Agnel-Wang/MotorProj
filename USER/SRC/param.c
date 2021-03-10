@@ -1,8 +1,15 @@
 #include "param.h"
 
+<<<<<<< HEAD
 //临时动作标志
 bool VESC_fire=false; 
 s32 VESC_fire_speed=1000;
+=======
+/* 踢球常量定义 */
+KickTypeDef kick[3];
+u8 kickBall=1;
+
+>>>>>>> parent of 8ce78a5 (2020-V.final)
 void param_Init(void)
 {
     Flag_Init();

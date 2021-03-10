@@ -39,7 +39,7 @@ typedef struct{
 
 /****标志位结构体****/
 typedef struct{
-    bool valve[8];                     //当前电磁阀状态
+    bool valve[4];                     //当前电磁阀状态
     volatile bool Can1CtrlList_Enable; // CAN1报文控制表启动标志位
     volatile bool Can2CtrlList_Enable; // CAN2报文控制表启动标志位
     volatile bool Can1SendqueueFULL;   // CAN1发送队列满
@@ -49,6 +49,20 @@ typedef struct{
     volatile bool Usart2DMASendFinish; // Usart2_DMA传输
 } FlagTypeDef;
 
+<<<<<<< HEAD
+=======
+/****踢球结构体****/
+typedef struct{
+  bool prepareOK;
+  u8 cnt;
+  s16 waittime;
+  s16 waitCnt;
+  bool isAutoKick;
+  bool init;
+  bool ok;//踢球结束
+}KickTypeDef;
+
+>>>>>>> parent of 8ce78a5 (2020-V.final)
 //第一位
 #define SYSTEMERROR   0x0000
 #define DJERROR       0x0001
@@ -71,12 +85,17 @@ typedef struct{
   ErrorList* head;
 }ErrorTypeDef;
 
+<<<<<<< HEAD
 /****动作执行参数定义****/
 extern bool VESC_fire;
 extern s32 VESC_fire_speed;
 
 /****结构体定义****/
+=======
+extern u8 kickBall;
+>>>>>>> parent of 8ce78a5 (2020-V.final)
 extern ErrorTypeDef error;
+extern KickTypeDef kick[3];
 extern Usart_Struct usart;
 extern FlagTypeDef flag;
 

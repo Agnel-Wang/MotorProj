@@ -15,27 +15,16 @@
 #define EPOS_Motor2_RX 0x582
 #define EPOS_Motor3_RX 0x583
 #define EPOS_Motor4_RX 0x584
-
-//状态结构体
-typedef struct{
-
-  vu16 statusword;
-}EPOSmotorStatus;
-
-typedef struct{
-  vs16 angle;
-  vs32 pulse;
-  vs16 speed;
-}EPOSmotorValue;
-
-//EPOS电机结构体
-typedef struct{
-  EPOSmotorValue EPOSmotorValSet, EPOSmotorValReal;
-  EPOSmotorStatus status;
-}EPOSmotorTypedef;
+#define EPOS_Motor1_Init 0x181
+#define EPOS_Motor2_Init 0x182
+#define EPOS_Motor3_Init 0x183
+#define EPOS_Motor4_Init 0x184
+#define EPOS_Motor1_error 0x81
+#define EPOS_Motor2_error 0x82
+#define EPOS_Motor3_error 0x83
+#define EPOS_Motor4_error 0x84
 
 extern u8 eposInitOK;
-extern EPOSmotorTypedef EPOSmotor[4];
 
 void EPOS_SetMode(u8 ID, s32 mode, u8 InInConGrpFlag);
 void EPOS_StartMotor(u8 ID, u8 InInConGrpFlag);
@@ -49,5 +38,6 @@ void EPOS_ReadStatusword(u8 ID, u8 InConGrpFlag);
 void EPOS_ReadPosition(u8 ID, u8 InConGrpFlag);
 void EPOS_ReadVelocity(u8 ID, u8 InConGrpFlag);
 void EPOS_ReadTorque(u8 ID, u8 InConGrpFlag);
+void EPOS_BootUP(u8 ID, u8 InConGrpFlag);
 
 #endif

@@ -8,8 +8,6 @@
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
 #include "vesc.h"
-#include "epos.h"
-#include "common_can.h"
 
 //电磁阀状态
 #define valve_open 		true
