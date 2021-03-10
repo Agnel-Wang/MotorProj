@@ -23,7 +23,7 @@ void TIM2_IRQHandler(void)
     if(TIM2->SR & (1<<0))//溢出中断
     {
 #ifdef USE_VESC
-        for(int i=0;i<4;i++)
+        for(int i=0;i<1;i++)
         {
             VESC_caculate(&VESCmotor[i]);
             if(VESCmotor[i].enable)
@@ -43,7 +43,9 @@ void TIM2_IRQHandler(void)
                       default:break;
                     }
                 }
-                else VESC_Set_Brake_Current(i+1,VESCmotor[i].limit.breakCurrent,0);
+                else 
+                  //VESC_Set_Brake_Current(i+1,VESCmotor[i].limit.breakCurrent,0);
+                  VESC_position_mode_pos(i);
             }
             else VESC_Set_Current(i+1,0.0,0);
             

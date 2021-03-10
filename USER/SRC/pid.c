@@ -34,7 +34,7 @@ void VESC_PID_Operation(VESC_PID_setTypeDef* PID, s32 setval, s32 curval)
   
   // Compute parameters
   PID->p_term = PID->error * PID->kp / 100.f;
-  PID->i_term += PID->error * PID->ki / 1000.f / 100.f;
+  PID->i_term += PID->error * PID->ki / 100.f;
   PID->d_term = (PID->error - PID->prv_error) * PID->kd / 100.f;
   
   // Filter D
@@ -42,6 +42,7 @@ void VESC_PID_Operation(VESC_PID_setTypeDef* PID, s32 setval, s32 curval)
 	PID->d_term = PID->d_filter;  
   
  	// I-term wind-up protection
+  
 	utils_truncate_number(&PID->i_term, -1.0f, 1.0f);  
   
   // Store previous error

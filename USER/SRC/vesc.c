@@ -39,7 +39,7 @@ void VESCInit(void)
 	VESCmotor[id].instrinsic=SUNNYSKY;
 	VESCmotor[id].enable=DISABLE;
 	VESCmotor[id].begin=true;
-	VESCmotor[id].mode=vesc_RPM_I;
+	VESCmotor[id].mode=RPM;//vesc_RPM_I
 	VESCmotor[id].valSet.current=0.0f;
 	VESCmotor[id].valSet.speed=500;
 	VESCmotor[id].valSet.position=0;
@@ -47,7 +47,7 @@ void VESCInit(void)
   PID_Init(&VESCmotor[id].PIDx, 0.5, 0.045, 0, 1, VESCmotor[id].valSet.position);
   PID_Init(&VESCmotor[id].PIDs, 0.007, 0.001, 1, 1, VESCmotor[id].valSet.speed);
   VESC_PID_Init(&VESCmotor[id].p_pid, 0.03, 0, 0.0004, 0.2);
-  VESC_PID_Init(&VESCmotor[id].s_pid, 0.1, 0.0001, 0.000001, 0.2);
+  VESC_PID_Init(&VESCmotor[id].s_pid, 0.015, 0.00, 0.00, 0.2);
   VESCmotor[id].limit=VESClimit;
   VESCmotor[id].limit.maxCurrentSet=60.0f;
   
@@ -81,8 +81,7 @@ void VESC_RPM_mode_I(u8 id)
 {
   utils_truncate_number_abs_s32(&VESCmotor[id].valSet.speed, VESCmotor[id].instrinsic.MAX_RPM);
   //1.VESC自身PID--直接计算法，对D单独低通滤波
-  VESCmotor[id].s_pid.SetVal = VESCmotor[id].valSet.speed;
-  VESC_PID_Operation(&VESCmotor[id].s_pid, VESCmotor[id].valSet.speed, VESCmotor[id].valReal.speed);
+  VESC_PID_Operation(&VESCmotor[id].s_pid, VESCmotor[id].valSet.speed * VESCmotor[id].instrinsic.POLE_PAIRS, VESCmotor[id].valReal.speed * VESCmotor[id].instrinsic.POLE_PAIRS);
   VESCmotor[id].valSet.current = VESCmotor[id].s_pid.output * VESCmotor[id].instrinsic.MAX_CURRENT;
   //2.增量法
 //  {
@@ -190,6 +189,11 @@ void VESC_position_mode_rpm(u8 id)
 //位置模式--通过VESC自带位置模式实现
 void VESC_position_mode_pos(u8 id)
 {
+  if(VESCmotor[id].begin)
+    VESCmotor[id].argum.difPosition=VESCmotor[id].valSet.position-VESCmotor[id].valReal.position;
+  else
+    VESCmotor[id].argum.difPosition=VESCmotor[id].argum.lockPosition-VESCmotor[id].valReal.position;
+  
   //反转最大允许15000转速
   if(SIG(VESCmotor[id].argum.difPosition)^SIG(VESCmotor[id].valReal.speed))
     angle_gap=90.f;

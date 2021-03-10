@@ -1,7 +1,7 @@
 #include "main.h"
 int main(void)
 {
-  Delay_ms(3000);//延时启动，等待机构上电
+    Delay_ms(3000);//延时启动，等待机构上电
 	SystemInit();
 	NVIC_SetPriorityGrouping(NVIC_PriorityGroup_3);	
 	RCC->AHB1ENR |= 7<<0;//使能PORTA，PORTB, PORTC时钟
@@ -14,7 +14,7 @@ int main(void)
 	USART1_Configuration();
 	USART2_Configuration();
 	TIM3_Configuration();
-  TIM2_Configuration();
+    TIM2_Configuration();
 	param_Init();
 	Can_SendqueueInit();
 	InitCANControlList(Can2_MesgSentList, CAN_2);
@@ -35,7 +35,7 @@ static void Task_Start(void *pdata)
 	OSTaskCreate(Task_Flag, (void *)0,(OS_STK *)&FLAG_TASK_STK[FLAG_STK_SIZE - 1], FLAG_TASK_PRIO);
 	OSTaskCreate(Task_Motor, (void *)0, (OS_STK *)&MOTOR_TASK_STK[MOTOR_STK_SIZE - 1],MOTOR_TASK_PRIO);
 	OSTaskCreate(Task_Scope, (void *)0,(OS_STK *)&SCOPE_TASK_STK[SCOPE_STK_SIZE - 1], SCOPE_TASK_PRIO);
-  OSTimeDly(100);
+    OSTimeDly(100);
   /****初始工作****/
   
   
@@ -45,8 +45,8 @@ static void Task_Start(void *pdata)
   /****************/
 	Led8DisData(0);
 	Beep_Show(2);//上电提醒，初始完成
-  OSTaskSuspend(START_TASK_PRIO); //挂起起始任务
-  OS_EXIT_CRITICAL();             //退出临界区
+    OSTaskSuspend(START_TASK_PRIO); //挂起起始任务
+    OS_EXIT_CRITICAL();             //退出临界区
 }
 
 // LCD任务

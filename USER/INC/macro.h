@@ -11,8 +11,8 @@
  * USE_DJ					是否使用大疆电机
  */
 
-//#define USE_VESC
-#define USE_DJ
+#define USE_VESC
+//#define USE_DJ
 
 /****电磁阀定义****/
 #define valvePaw 0x01

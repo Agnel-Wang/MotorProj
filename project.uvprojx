@@ -496,6 +496,11 @@
               <FileType>5</FileType>
               <FilePath>.\USER\INC\macro.h</FilePath>
             </File>
+            <File>
+              <FileName>adrc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\adrc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -1,10 +1,11 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "xutility": "c",
-        "ios": "c",
-        "string": "c",
-        "xstring": "c"
+      "xutility": "c",
+      "ios": "c",
+      "string": "c",
+      "xstring": "c",
+      "main.h": "c"
     },
     "markdownlint.config": {
         "default": true,

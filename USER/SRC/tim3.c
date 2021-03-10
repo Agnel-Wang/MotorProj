@@ -4,7 +4,7 @@ void TIM3_Configuration(void)
 {
 	RCC->APB1ENR|=1<<1;//TIM3时钟使能
     TIM3->ARR=11999;//自动重载值1500
-    TIM3->PSC=70-1;//预分频器值7
+    TIM3->PSC=7-1;//预分频器值7
 	TIM3->CR1 |= 1<<8;//预装载
     TIM3->SR &= ~(1<<0);//清除标志位
  	TIM3->DIER |= 1<<0;//允许更新中断
