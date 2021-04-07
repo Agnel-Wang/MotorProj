@@ -23,7 +23,7 @@ void Motor_Init(void)
         Motorlimit.isPosLimitON=false;
         Motorlimit.maxAngle=500;      
         Motorlimit.zeroSP=500;
-        Motorlimit.zeroCurrent=1000;
+        Motorlimit.zeroCurrent=3000;
       
         RMmotorlimit.isPosSPLimitOn=true;
         RMmotorlimit.posSPlimit=400;
@@ -31,30 +31,11 @@ void Motor_Init(void)
         RMmotorlimit.isPosLimitON=false;
         RMmotorlimit.maxAngle=500;
       
-      #ifdef SteeringMotor
-        #ifdef PassRobot
-          #if ID_SELF == MOROE_4_and_2
-        Motorlimit.isPosLimitON=true;
-        Motorlimit.maxAngle= 17.f;
-        Motorlimit.isPosSPLimitOn=false;
-          #else
-        Motorlimit.isPosLimitON=true;
-        Motorlimit.maxAngle= 185;//轮毂最多旋转±0.5圈多一丢丢
-        Motorlimit.isPosSPLimitOn=false;
-          #endif
-        #elif defined TryRobot
-        Motorlimit.isPosLimitON=true;
-        Motorlimit.maxAngle= 185*GearRatio;
-        Motorlimit.isPosSPLimitOn=false;
-        #endif
-      #else
-        
-      #endif
     }
     {//电机其他参数设置
         Motorargum.timeoutTicks = 2000;//2000ms
     }
-    /****0号电机初始化****/id=5;
+    /****5号电机初始化****/id=5;
     motor[id].intrinsic=RM6025instrin;
     motor[id].enable=DISABLE;
     motor[id].begin=true;
@@ -66,7 +47,7 @@ void Motor_Init(void)
     PID_Init(&motor[id].PIDs, 10, 10, 0, 1, motor[id].valueSet.speed);
     motor[id].limit=RMmotorlimit;
   
-    /****1号电机初始化****/id=1;
+    /****0号电机初始化****/id=0;//转台电机
     motor[id].intrinsic=M3508instrin;
     motor[id].enable=DISABLE;
     motor[id].begin=true;
@@ -74,9 +55,15 @@ void Motor_Init(void)
     motor[id].valueSet.angle=0;
     motor[id].valueSet.speed=1000;
     motor[id].valueSet.current=100;
-    PID_Init(&motor[id].PIDx, 5, 0.2, 0, 0.4, motor[id].valueSet.pulse);
-    PID_Init(&motor[id].PIDs, 8, 0.3, 0, 1, motor[id].valueSet.speed);
+    PID_Init(&motor[id].PIDx, 10, 0.5, 0, 0.4, motor[id].valueSet.pulse);
+    PID_Init(&motor[id].PIDs, 10, 0.9, 0, 1, motor[id].valueSet.speed);
     motor[id].limit=Motorlimit;
+    motor[id].limit.zeroSP=-500;
+    motor[id].limit.isPosLimitON=true;
+    motor[id].limit.maxAngle=280;
+    motor[id].limit.isPosSPLimitOn = true;
+    motor[id].limit.posSPlimit = 1400;
+    motor[id].intrinsic.GEARRATIO=94.f/17.f;
     
     for(int i=0;i<8;i++)
     {
@@ -135,6 +122,8 @@ void zero_mode(s16 id)
     {
         motor[id].argum.zeroCnt=0; motor[id].valueReal.pulse=0;
         motor[id].mode=position; motor[id].status.zero=1;
+        motor[id].valueSet.angle=0;
+        motor[id].valueReal.pulse=0;
     }
 }
 
@@ -145,7 +134,7 @@ void pulse_caculate(void)
 	for(int id=0;id<8;id++)
 	{
     
-        if(motor[id].intrinsic.CURRENT_LIMIT==RM6025instrin.CURRENT_LIMIT)
+        if(motor[id].intrinsic.CURRENT_LIMIT==RM6025instrin.CURRENT_LIMIT)//RM6025速度计算
           motor[id].valueReal.speed=(double)(motor[id].valueReal.pulse-pulse_RM[id])*100*60/motor[id].intrinsic.PULSE;
         pulse_RM[id]=motor[id].valueReal.pulse;
         /* 判断是否堵转 */

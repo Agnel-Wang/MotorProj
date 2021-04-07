@@ -26,81 +26,14 @@ void ELMO_Motor_Init(void)
 	{//电机其他参数设置
 		ELMOargum.timeoutTicks = 2000;//2000ms
 	}
-#ifdef SteeringMotor
-	/****0号电机初始化****/
-	ELMOmotor[0].intrinsic=Flat90;
-	ELMOmotor[0].enable=DISABLE;
-	ELMOmotor[0].mode=RPM;
-    ELMOmotor[0].valSet.angle=300;
-    ELMOmotor[0].valSet.speed=100;
-    ELMOmotor[0].valSet.current=100;
-
-	/****1号电机初始化****/
-	ELMOmotor[1].intrinsic=Flat90;
-	ELMOmotor[1].enable=DISABLE;
-	ELMOmotor[1].mode=RPM;
-    ELMOmotor[1].valSet.angle=300;
-    ELMOmotor[1].valSet.speed=100;
-    ELMOmotor[1].valSet.current=100;
-
-	/****2号电机初始化****/
-	ELMOmotor[2].intrinsic=Flat90;
-	ELMOmotor[2].enable=DISABLE;
-	ELMOmotor[2].mode=RPM;
-    ELMOmotor[2].valSet.angle=300;
-    ELMOmotor[2].valSet.speed=100;
-    ELMOmotor[2].valSet.current=100;
-
-	/****3号电机初始化****/
-	ELMOmotor[3].intrinsic=Flat90;
-	ELMOmotor[3].enable=DISABLE;
-	ELMOmotor[3].mode=RPM;
-    ELMOmotor[3].valSet.angle=300;
-    ELMOmotor[3].valSet.speed=100;
-    ELMOmotor[3].valSet.current=100;
-#elif defined ActionMotor
-	#ifdef PassRobot
-	/****0号电机初始化****/
-	ELMOmotor[0].intrinsic=U10;
-	ELMOmotor[0].enable=DISABLE;
-	ELMOmotor[0].mode=position;
-    ELMOmotor[0].valSet.angle=360;
-    ELMOmotor[0].valSet.speed=2000;
-    ELMOmotor[0].valSet.current=100;
-
-	/****1号电机初始化****/
-	ELMOmotor[1].intrinsic=U10;
-	ELMOmotor[1].enable=DISABLE;
-	ELMOmotor[1].mode=position;
-    ELMOmotor[1].valSet.angle=360;
-    ELMOmotor[1].valSet.speed=2000;
-    ELMOmotor[1].valSet.current=100;
-	
-	/****2号电机初始化****/
-	ELMOmotor[2].intrinsic=U10;
-	ELMOmotor[2].enable=DISABLE;
-	ELMOmotor[2].mode=position;
-    ELMOmotor[2].valSet.angle=360;
-    ELMOmotor[2].valSet.speed=2000;
-    ELMOmotor[2].valSet.current=100;
-	#elif defined TryRobot
 	/****0号电机初始化****/
 	ELMOmotor[0].intrinsic=EC_4P_30;
 	ELMOmotor[0].enable=DISABLE;
 	ELMOmotor[0].mode=position;
-    ELMOmotor[0].valSet.angle=360;
-    ELMOmotor[0].valSet.speed=4500;
-    ELMOmotor[0].valSet.current=100;
+  ELMOmotor[0].valSet.angle=0;
+  ELMOmotor[0].valSet.speed=100;
+  ELMOmotor[0].valSet.current=100;
 
-	/****1号电机初始化****/
-	ELMOmotor[1].intrinsic=EC_4P_30;
-	ELMOmotor[1].enable=DISABLE;
-	ELMOmotor[1].mode=position;
-    ELMOmotor[1].valSet.angle=360;
-    ELMOmotor[1].valSet.speed=4500;
-    ELMOmotor[1].valSet.current=100;
-	#endif
-#endif
 	for(int i=0;i<5;i++)
 	{
 		ELMOmotor[i].limit=ELMOlimit;

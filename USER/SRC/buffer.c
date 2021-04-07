@@ -68,3 +68,28 @@ float buffer_16_to_float(const uint8_t *buffer, float scale, int32_t *index)
 {
     return (float)get_s16_from_buffer(buffer, index) / scale;
 }
+
+/**
+  * @brief  converts unsigned int to float, given range and number of bits
+  * @param
+  * @retval 
+  */
+float uint2float(int x_int, float x_min, float x_max, int bits)
+{
+    float span = x_max - x_min;
+    float offset = x_min;
+    return ((float)x_int)*span/((float)((1<<bits)-1)) + offset;
+}
+
+/**
+  * @brief  Converts a float to an unsigned int, given range and number of bits
+  * @param
+  * @retval 
+  */
+u16 float2uint(float x, float x_min, float x_max, u8 bits)
+{
+    float span = x_max - x_min;
+    float offset = x_min;
+    
+    return (u16) ((x-offset)*((float)((1<<bits)-1))/span);
+}

@@ -1,15 +1,25 @@
 #include "param.h"
 
-//临时动作标志
-bool VESC_fire=false; 
-s32 VESC_fire_speed=1000;
+Overturn overturn;
 void param_Init(void)
 {
     Flag_Init();
     Motor_Init();
+    Tmotorinit();
     ELMO_Motor_Init();
     VESCInit();
     error.head=creatError();
+    
+    //任务参数初始化
+    overturn.angle[0][0] = -92.9;
+    overturn.angle[0][1] = 97.75;
+    overturn.angle[1][0] = -282.0;
+    overturn.angle[1][1] = 0;
+    overturn.angle[2][0] = 0;
+    overturn.angle[2][1] = -91.0;
+    overturn.angle[3][0] = -196.9;
+    overturn.angle[3][1] = -229.3;
+    overturn.downtim = 500;
 }
 
 void Flag_Init(void)

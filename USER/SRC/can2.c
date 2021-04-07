@@ -142,8 +142,8 @@ void CAN2_Configuration()
   CAN_FilterInitStructure.CAN_FilterNumber = 22;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =CAN_EMERGENCY1<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = CAN_EMERGENCY2<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdHigh =0x00<< 5;
+	CAN_FilterInitStructure.CAN_FilterIdLow = 0x00<< 5;
 	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =CAN_EMERGENCY3 << 5;
 	CAN_FilterInitStructure.CAN_FilterMaskIdLow =CAN_EMERGENCY4 << 5;
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO1;
@@ -163,7 +163,7 @@ void CAN2_Configuration()
 #ifdef USE_DJ
 	CAN_ITConfig(CAN2,CAN_IT_FMP0, ENABLE);
 #endif
-#if defined USE_ELMO | defined USE_VESC | defined USE_EPOS
+#if defined USE_ELMO | defined USE_VESC | defined USE_EPOS | USE_TMOTOR
 	CAN_ITConfig(CAN2,CAN_IT_FMP1, ENABLE);
 #endif
 }
@@ -185,8 +185,8 @@ void CAN2_RX0_IRQHandler(void)
         ChangeData(&rx_message.Data[0],&rx_message.Data[1]);
         ChangeData(&rx_message.Data[2],&rx_message.Data[3]);
         ChangeData(&rx_message.Data[4],&rx_message.Data[5]);
-        if(motor[id].intrinsic.CURRENT_LIMIT == RM6025instrin.CURRENT_LIMIT)
-        {
+      if(motor[id].intrinsic.CURRENT_LIMIT == RM6025instrin.CURRENT_LIMIT)//判断是否为RM6025反馈
+        {//RM6025只有脉冲和电流反馈
           DecodeS16Data(&motor[id].valueReal.pulseRead,&rx_message.Data[0]);
           DecodeS16Data(&motor[id].valueReal.current,&rx_message.Data[2]);
         }
@@ -310,6 +310,12 @@ void CAN2_RX1_IRQHandler(void)
         DecodeS32Data(&EPOSmotor[id].status.statusword,&rx_message.Data[4]);
       }
     }
+#endif
+#if USE_TMOTOR
+  if(rx_message.StdId==0x00)
+  {
+    Rcv_motor(rx_message, &tmotor[rx_message.Data[0] - 1]);
+  }
 #endif
   }
 }

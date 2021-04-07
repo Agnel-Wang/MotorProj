@@ -12,7 +12,7 @@ void TIM2_Configuration(void)
   TIM2->CR1 |= 0x01;//使能TIM2
   MY_NVIC_Init(1,1,TIM2_IRQn,3);//中断优先级0,1；分组3
 }
-
+static bool  sendt = 0;
 void ElmoAction(void);
 void ElmoAskStatus(void);
 void EposAction(void);
@@ -72,6 +72,124 @@ void TIM2_IRQHandler(void)
 #ifdef USE_EPOS
   EposAskStatus();
   EposAction();
+#endif
+#if USE_TMOTOR
+        static u16 overcnt;
+        switch(overturn.process)
+        {
+            case 1:
+                tmotor[TMOTOR_FR].valSet.angle = -overturn.angle[0][0];
+                tmotor[TMOTOR_RR].valSet.angle = -overturn.angle[0][1];
+                tmotor[TMOTOR_RL].valSet.angle = overturn.angle[0][1];
+                tmotor[TMOTOR_FL].valSet.angle = overturn.angle[0][0];
+                break;
+            case 2:
+                tmotor[TMOTOR_FL].valSet.angle = overturn.angle[1][0];
+                tmotor[TMOTOR_FR].valSet.angle = -overturn.angle[1][0];
+                tmotor[TMOTOR_RR].valSet.angle = -overturn.angle[0][1];
+                tmotor[TMOTOR_RL].valSet.angle = overturn.angle[0][1];
+                break;
+            case 3:
+                tmotor[TMOTOR_RR].valSet.angle = -overturn.angle[2][1];
+                tmotor[TMOTOR_RL].valSet.angle = overturn.angle[2][1];
+                tmotor[TMOTOR_FL].valSet.angle = overturn.angle[1][0];
+                tmotor[TMOTOR_FR].valSet.angle = -overturn.angle[1][0];
+                break;
+            case 4:
+                if(overcnt==0)
+                {
+                    overturn.delta[0] = overturn.angle[3][0]-tmotor[TMOTOR_FL].valReal.angle;
+                    overturn.downangdelta[0] = overturn.delta[0]/overturn.downtim;
+                    overturn.delta[1] = overturn.angle[3][1]-tmotor[TMOTOR_RL].valReal.angle;
+                    overturn.downangdelta[1] = overturn.delta[1]/overturn.downtim;
+                }
+                if(overcnt<overturn.downtim)
+                    overcnt++;
+                else
+                {    
+                    overturn.process = 0;
+                    overcnt = 0;
+                }
+                tmotor[TMOTOR_FR].valSet.angle -= overturn.downangdelta[0];
+                tmotor[TMOTOR_FL].valSet.angle += overturn.downangdelta[0];
+                tmotor[TMOTOR_RR].valSet.angle -= overturn.downangdelta[1];
+                tmotor[TMOTOR_RL].valSet.angle += overturn.downangdelta[1];
+                break;
+            case 5:
+                if(overcnt==0)
+                {
+                    overturn.delta[0] = -tmotor[TMOTOR_FL].valReal.angle;
+                    overturn.downangdelta[0] = overturn.delta[0]/overturn.downtim;
+                    overturn.delta[1] = -tmotor[TMOTOR_RL].valReal.angle;
+                    overturn.downangdelta[1] = overturn.delta[1]/overturn.downtim;
+                }
+                if(overcnt<overturn.downtim)
+                    overcnt++;
+                else
+                {    
+                    overturn.process = 0;
+                    overcnt = 0;
+                }
+                tmotor[TMOTOR_FR].valSet.angle -= overturn.downangdelta[0];
+                tmotor[TMOTOR_FL].valSet.angle += overturn.downangdelta[0];
+                tmotor[TMOTOR_RR].valSet.angle -= overturn.downangdelta[1];
+                tmotor[TMOTOR_RL].valSet.angle += overturn.downangdelta[1];               
+            default:break;
+        }
+        if(sendt)
+        {
+           sendt = false;
+            for(int i=0; i<4; i++)
+            {
+                TmotorCaculate(i, &tmotor[i]);
+                
+                if(tmotor[i].enable)
+                {
+                    if(tmotor[i].begin)
+                    {
+                        switch(tmotor[i].mode)
+                        {
+                            case current:Tmotor_ControlPara(i, 0, 0, 0, 0,tmotor[i].valSet.torque);
+                                break;
+                            case RPM:Tmotor_ControlPara(i, 0,tmotor[i].valSet.speed, 0,tmotor[i].kd,tmotor[i].valSet.torque);
+                                break;
+                            case position:
+                                    Tmotor_ControlPara(i, tmotor[i].valSet.position,tmotor[i].valSet.speed,tmotor[i].kp,tmotor[i].kd,tmotor[i].valSet.torque);     
+                                    break;
+                            default:Tmotor_ControlPara(i, 0, 0, 0, 0, 0);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        else
+{sendt = true;
+        for(int i=4; i<8; i++)
+        {
+            TmotorCaculate(i, &tmotor[i]);
+            
+            if(tmotor[i].enable)
+            {
+                if(tmotor[i].begin)
+                {
+                    switch(tmotor[i].mode)
+                    {
+                        case current:Tmotor_ControlPara(i, 0, 0, 0, 0,tmotor[i].valSet.torque);
+                            break;
+                        case RPM:Tmotor_ControlPara(i, 0,tmotor[i].valSet.speed, 0,tmotor[i].kd,tmotor[i].valSet.torque);
+                            break;
+                        case position:
+                                Tmotor_ControlPara(i, tmotor[i].valSet.position,tmotor[i].valSet.speed,tmotor[i].kp,tmotor[i].kd,tmotor[i].valSet.torque);     
+                                break;
+                        default:Tmotor_ControlPara(i, 0, 0, 0, 0, 0);
+                            break;
+                    }
+                }
+            }
+        }
+
+}
 #endif
     }
     TIM2->SR &= ~(1<<0);//清除中断标志位

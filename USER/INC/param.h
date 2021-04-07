@@ -5,10 +5,24 @@
 #include "led.h"
 #include "buffer.h"
 #include "vesc.h"
+#include "tmotor.h"
 #include "stm32f4xx.h"
 
 #define RESET_PRO {__set_FAULTMASK(1);NVIC_SystemReset();}
 typedef _Bool(*MatchFunc) (const void *key1, const void *key2);
+
+#define FRONTPOS    0.f
+#define REARPOS     0.f
+
+typedef struct {
+    u8 process;
+    float speed;
+    volatile float angle[4][2];
+    float downtim;
+    float downangdelta[2];
+		float delta[2];
+}Overturn;
+extern Overturn overturn;
 
 /**
  * @description: serial communication buffer size
@@ -72,8 +86,6 @@ typedef struct{
 }ErrorTypeDef;
 
 /****动作执行参数定义****/
-extern bool VESC_fire;
-extern s32 VESC_fire_speed;
 
 /****结构体定义****/
 extern ErrorTypeDef error;

@@ -1,0 +1,12 @@
+.\obj\misc.o: Libraries\STM32F4xx_StdPeriph_Driver\src\misc.c
+.\obj\misc.o: .\Libraries\STM32F4xx_StdPeriph_Driver\inc\misc.h
+.\obj\misc.o: .\Libraries\CMSIS\stm32f4xx.h
+.\obj\misc.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include\core_cm4.h
+.\obj\misc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\misc.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include\cmsis_version.h
+.\obj\misc.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include\cmsis_compiler.h
+.\obj\misc.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include\cmsis_armcc.h
+.\obj\misc.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.3.0\CMSIS\Include\mpu_armv7.h
+.\obj\misc.o: .\Libraries\CMSIS\system_stm32f4xx.h
+.\obj\misc.o: .\USER\INC\stm32f4xx_conf.h
+.\obj\misc.o: .\Libraries\STM32F4xx_StdPeriph_Driver\inc\misc.h

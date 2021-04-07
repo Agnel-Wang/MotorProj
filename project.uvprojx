@@ -412,6 +412,11 @@
               <FilePath>.\USER\SRC\motor.c</FilePath>
             </File>
             <File>
+              <FileName>tmotor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\tmotor.c</FilePath>
+            </File>
+            <File>
               <FileName>elmo.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\SRC\elmo.c</FilePath>
@@ -500,6 +505,11 @@
               <FileName>adrc.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\USER\SRC\adrc.c</FilePath>
+            </File>
+            <File>
+              <FileName>tim4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\SRC\tim4.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -807,7 +817,7 @@
         <package name="STM32F4xx_DFP" schemaVersion="1.0" url="http://www.keil.com/pack" vendor="Keil" version="1.0.5"/>
         <targetInfos/>
       </file>
-      <file attr="config" category="source" condition="STM32F405xx_ARMCC" name="Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f405xx.s" version="2.5.0">
+      <file attr="config" category="source" condition="STM32F405xx_ARMCC" name="Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f405xx.s" version="0.0.0">
         <instance index="0">RTE\Device\STM32F405RG\startup_stm32f405xx.s</instance>
         <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="2.5.0" condition="STM32F4 CMSIS"/>
         <package name="STM32F4xx_DFP" schemaVersion="1.3" url="http://www.keil.com/pack" vendor="Keil" version="2.9.0"/>

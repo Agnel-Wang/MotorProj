@@ -17,7 +17,7 @@ void VESCInit(void)
 	{//电机内参
 		SUNNYSKY.POLE_PAIRS=7;
     SUNNYSKY.MAX_CURRENT=60.0f;
-    SUNNYSKY.MAX_RPM=1000;
+    SUNNYSKY.MAX_RPM=5000;
     
     VESC_U10.POLE_PAIRS=21;
     VESC_U10.MAX_RPM=2100;
@@ -27,7 +27,7 @@ void VESCInit(void)
 	{//电机限制保护
     VESClimit.isPosLimitOn=false;
     VESClimit.maxPosition=30000;
-    VESClimit.isPosSPLimitOn=true;
+    VESClimit.isPosSPLimitOn=false;
     VESClimit.posSPlimit=1000;
     VESClimit.maxCurrentSet=10.f;
 	}
@@ -36,7 +36,7 @@ void VESCInit(void)
     VESCargum.fistPos=true;
 	}
 	/****0号电机初始化****/id=0;
-	VESCmotor[id].instrinsic=SUNNYSKY;
+	VESCmotor[id].instrinsic=VESC_U10;
 	VESCmotor[id].enable=DISABLE;
 	VESCmotor[id].begin=true;
 	VESCmotor[id].mode=RPM;//vesc_RPM_I
@@ -55,7 +55,7 @@ void VESCInit(void)
 	VESCmotor[id].instrinsic=VESC_U10;
 	VESCmotor[id].enable=DISABLE;
 	VESCmotor[id].begin=true;
-	VESCmotor[id].mode=RPM;
+	VESCmotor[id].mode=position;
 	VESCmotor[id].valSet.current=10;
 	VESCmotor[id].valSet.speed=-200;
 	VESCmotor[id].valSet.position=0;
@@ -182,7 +182,8 @@ void VESC_position_mode_rpm(u8 id)
   VESCmotor[id].PIDx.CurVal=VESCmotor[id].valReal.position;
   PID_Operation(&VESCmotor[id].PIDx);
   if(motor->limit.isPosSPLimitOn) 
-    PEAK(VESCmotor[id].PIDx.Udlt,motor->limit.posSPlimit);
+ //   PEAK(VESCmotor[id].PIDx.Udlt,motor->limit.posSPlimit);
+  ;
   VESC_Set_Speed(id+1, VESCmotor[id].PIDx.Udlt * VESCmotor[id].instrinsic.POLE_PAIRS, 0);
 }
 

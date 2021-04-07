@@ -87,14 +87,14 @@ void USART2_IRQHandler(void)
           switch (usart.RxBuffer_USART2[5])
           {
             case 3:
-                VESC_fire_speed=atof((char*)(&usart.RxBuffer_USART2[7]));
+                
               break;
             case 6:
                 VESCmotor[0].enable=true;
                 VESCmotor[1].enable=true;
               break;
             case 8:
-                VESC_fire=true;
+                
               break;
             default:;
           }
@@ -381,7 +381,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x08;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[0].valueReal.speed);
+    sprintf(str_temp,"%d",(s16)motor[0].valueReal.speed);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);    
@@ -397,7 +397,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x11;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[0].limit.posSPlimit);
+    sprintf(str_temp,"%d",(s16)motor[0].limit.posSPlimit);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -427,7 +427,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x09;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[1].valueReal.speed);
+    sprintf(str_temp,"%d",(s16)motor[1].valueReal.speed);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);    
@@ -443,7 +443,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x12;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[1].limit.posSPlimit);
+    sprintf(str_temp,"%d",(s16)motor[1].limit.posSPlimit);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -473,7 +473,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x0A;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[2].valueReal.speed);
+    sprintf(str_temp,"%d",(s16)motor[2].valueReal.speed);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);   
@@ -481,7 +481,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x0E;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[2].valueReal.angle);
+    sprintf(str_temp,"%d",(s16)motor[2].valueReal.angle);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -489,7 +489,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x13;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[2].limit.posSPlimit);
+    sprintf(str_temp,"%d",(s16)motor[2].limit.posSPlimit);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -519,7 +519,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x0B;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[3].valueReal.speed);
+    sprintf(str_temp,"%d",(s16)motor[3].valueReal.speed);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);  
@@ -535,7 +535,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x14;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[3].limit.posSPlimit);
+    sprintf(str_temp,"%d",(s16)motor[3].limit.posSPlimit);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -586,7 +586,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x08;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[4].valueReal.speed);
+    sprintf(str_temp,"%d",(s16)motor[4].valueReal.speed);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);    
@@ -602,7 +602,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x11;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[4].limit.posSPlimit);
+    sprintf(str_temp,"%d",(s16)motor[4].limit.posSPlimit);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -632,7 +632,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x09;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[5].valueReal.speed);
+    sprintf(str_temp,"%d",(s16)motor[5].valueReal.speed);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);    
@@ -648,7 +648,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x12;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[5].limit.posSPlimit);
+    sprintf(str_temp,"%d",(s16)motor[5].limit.posSPlimit);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -678,7 +678,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x0A;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[6].valueReal.speed);
+    sprintf(str_temp,"%d",(s16)motor[6].valueReal.speed);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);    
@@ -694,7 +694,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x13;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[6].limit.posSPlimit);
+    sprintf(str_temp,"%d",(s16)motor[6].limit.posSPlimit);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);
@@ -724,7 +724,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x0B;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[7].valueReal.speed);
+    sprintf(str_temp,"%d",(s16)motor[7].valueReal.speed);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);  
@@ -740,7 +740,7 @@ void UsartLCDshow(void)
     usart.TxBuffer_USART2[i++]=0x00;
     usart.TxBuffer_USART2[i++]=0x14;
     usart.TxBuffer_USART2[i++]=0x00;
-    sprintf(str_temp,"%d",motor[7].limit.posSPlimit);
+    sprintf(str_temp,"%d",(s16)motor[7].limit.posSPlimit);
     usart.TxBuffer_USART2[i++]=strlen(str_temp);
     strcpy((char*)(&usart.TxBuffer_USART2[i]),str_temp);
     i += strlen(str_temp);

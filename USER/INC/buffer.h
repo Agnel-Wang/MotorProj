@@ -11,5 +11,7 @@ void DecodeFloatData_From_4byte(float* f, u8* buff);
 void EcodeFloatData_to_4byte(float *f, u8 *buff);
 s32 get_s32_from_buffer(const u8 *buffer, s32 *index);
 s16 get_s16_from_buffer(const u8 *buffer, s32 *index);
+u16 float2uint(float x, float x_min, float x_max, u8 bits);
+float uint2float(int , float , float , int );
 
 #endif

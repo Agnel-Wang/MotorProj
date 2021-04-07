@@ -36,102 +36,50 @@ void CAN1_Configuration(void)
   CAN_Init(CAN1, &CAN_InitStructure);      //初始化CAN1
 
   /* CAN filter init */
-  CAN_FilterInitStructure.CAN_FilterNumber = 2;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor1_TX<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = Elmo_Motor2_TX<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =Elmo_Motor3_TX << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =Elmo_Motor4_TX << 5;
-  CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-  CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-  CAN_FilterInit(&CAN_FilterInitStructure);
-
-  #if ID_SELF == MOROE_4_and_2
-  
-  CAN_FilterInitStructure.CAN_FilterNumber = 4;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh =0X305<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = 0X306<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X307 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x308<< 5;
-  CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-  CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-  CAN_FilterInit(&CAN_FilterInitStructure);
-  
-  CAN_FilterInitStructure.CAN_FilterNumber = 5;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh =0X309<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = 0X310<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =0X320 << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =0x321<< 5;
-  CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-  CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-  CAN_FilterInit(&CAN_FilterInitStructure);
-  #endif
-  
-  #if ID_SELF == MOTOR_0_3
-  #ifdef USE_ELMO
-	CAN_FilterInitStructure.CAN_FilterNumber = 3;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =Elmo_Motor1_RX<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = Elmo_Motor2_RX<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =Elmo_Motor3_RX << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =Elmo_Motor4_RX << 5;
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-	CAN_FilterInit(&CAN_FilterInitStructure);
-  #elif defined USE_EPOS
-	CAN_FilterInitStructure.CAN_FilterNumber = 3;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =EPOS_Motor1_RX<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = EPOS_Motor2_RX<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =EPOS_Motor3_RX << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =EPOS_Motor4_RX << 5;
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-	CAN_FilterInit(&CAN_FilterInitStructure);
-  
- 	CAN_FilterInitStructure.CAN_FilterNumber = 4;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdHigh =EPOS_Motor1_Init<< 5;
-	CAN_FilterInitStructure.CAN_FilterIdLow = EPOS_Motor2_Init<< 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =EPOS_Motor3_Init << 5;
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow =EPOS_Motor4_Init << 5;
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
-	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-	CAN_FilterInit(&CAN_FilterInitStructure); 
-  #endif
-  #endif
-#ifdef ActionMotor
-  CAN_FilterInitStructure.CAN_FilterNumber = 2; //屏蔽位模式
+  CAN_FilterInitStructure.CAN_FilterNumber = 1; //一次性发射
   CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
   CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh = ((ID_SELF << 3) & 0xFFFF0000) >> 16;
-  CAN_FilterInitStructure.CAN_FilterIdLow = (ID_SELF << 3) & 0xFFFF;
+  CAN_FilterInitStructure.CAN_FilterIdHigh =((0x01314156 << 3) & 0xFFFF0000) >> 16;
+  CAN_FilterInitStructure.CAN_FilterIdLow = (0x01314156 << 3) & 0xFFFF;
+  CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (0xFFFF00 << 3) >> 16;
+  CAN_FilterInitStructure.CAN_FilterMaskIdLow = (0xFFFF << 3) & 0xFFFF;
+  CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
+  CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+  CAN_FilterInit(&CAN_FilterInitStructure);
+  
+  CAN_FilterInitStructure.CAN_FilterNumber = 2; //转箭防守
+  CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
+  CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+  CAN_FilterInitStructure.CAN_FilterIdHigh =((0x01314157 << 3) & 0xFFFF0000) >> 16;
+  CAN_FilterInitStructure.CAN_FilterIdLow = (0x01314157 << 3) & 0xFFFF;
   CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (0xFFFF00 << 3) >> 16;
   CAN_FilterInitStructure.CAN_FilterMaskIdLow = (0xFFFF << 3) & 0xFFFF;
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
 
-  CAN_FilterInitStructure.CAN_FilterNumber = 3; //屏蔽位模式
+  CAN_FilterInitStructure.CAN_FilterNumber = 3; //转箭防守
   CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
   CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh =((BROADCAST_ID << 3) & 0xFFFF0000) >> 16;
-  CAN_FilterInitStructure.CAN_FilterIdLow = (BROADCAST_ID << 3) & 0xFFFF;
+  CAN_FilterInitStructure.CAN_FilterIdHigh =((0x01314150 << 3) & 0xFFFF0000) >> 16;
+  CAN_FilterInitStructure.CAN_FilterIdLow = (0x01314150 << 3) & 0xFFFF;
   CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (0xFFFF00 << 3) >> 16;
   CAN_FilterInitStructure.CAN_FilterMaskIdLow = (0xFFFF << 3) & 0xFFFF;
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
-#endif
-
+  
+  CAN_FilterInitStructure.CAN_FilterNumber = 4; //翻阅
+  CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
+  CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+  CAN_FilterInitStructure.CAN_FilterIdHigh =((0x00010500 << 3) & 0xFFFF0000) >> 16;
+  CAN_FilterInitStructure.CAN_FilterIdLow = (0x00010500 << 3) & 0xFFFF;
+  CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (0xFFFF00 << 3) >> 16;
+  CAN_FilterInitStructure.CAN_FilterMaskIdLow = (0xFFFF << 3) & 0xFFFF;
+  CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
+  CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+  CAN_FilterInit(&CAN_FilterInitStructure);
+  
   NVIC_InitStructure.NVIC_IRQChannel = CAN1_RX0_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -143,24 +91,6 @@ void CAN1_Configuration(void)
 
 static void answer_master(CanRxMsg *rx_message);
 
-#ifdef SteeringMotor
-/****反馈电机角度****/
-static void feedbackAngle(u16 motorID)
-{
-  CanTxMsg tx_message;
-  tx_message.StdId =motorID-0x80;
-  tx_message.IDE = CAN_Id_Standard;
-  tx_message.RTR = CAN_RTR_Data;
-  tx_message.DLC = 5;
-  tx_message.Data[0] = 'B';
-  tx_message.Data[1] = 'B';
-  tx_message.Data[2] = 'G';
-  u8 id = motorID - 0x305;
-  s16TempData[id]=motor[id].valueReal.angle*30.f;
-  EncodeS16Data(&s16TempData[id], &tx_message.Data[3]);
-  CAN_Transmit(CAN1, &tx_message);
-}
-#endif
 
 void CAN1_RX0_IRQHandler(void) 
 {
@@ -170,200 +100,174 @@ void CAN1_RX0_IRQHandler(void)
     CAN_ClearITPendingBit(CAN1, CAN_IT_FMP0);
     CAN_ClearFlag(CAN1, CAN_IT_FMP0);
     CAN_Receive(CAN1, CAN_FIFO0, &rx_message);
-  	#ifdef VER
-			if((u8)rxmsg.Data[1] >= (u8)('A'+0x40))		
-			{
-				CAN_Procedure.status |= BIT0;//当前报文拥有流程号
-				CAN_Procedure.order_now = (u8)rxmsg.Data[rxmsg.DLC - 1];//流程号为报文最后一个字节	
-				if(CAN_Procedure.status & BIT7)
-				{
-					CAN_Procedure.order_valid = CAN_Procedure.order_now;			
-					CAN_Procedure.order_valid++;	
-					CAN_Procedure.status = 0x03;				
-				}
-				else
-				{
-					CAN_Procedure.status = 0x01;							
-					if(CAN_Procedure.order_valid == CAN_Procedure.order_now)
-					{
-						CAN_Procedure.status |= BIT1;				
-						CAN_Procedure.order_valid ++;
-					}
-					else
-					{
-						CAN_Procedure.status &= ~BIT1;					
-						if(CAN_Procedure.order_valid > 127)
-						{
-							if((CAN_Procedure.order_now >= (CAN_Procedure.order_valid - 128)) && (CAN_Procedure.order_now < CAN_Procedure.order_valid))						
-								CAN_Procedure.status &= ~BIT2;
-							else
-								CAN_Procedure.status |= BIT2;	
-						}
-						else
-						{
-							if((CAN_Procedure.order_now <= (CAN_Procedure.order_valid + 127)) && (CAN_Procedure.order_now > CAN_Procedure.order_valid))							
-								CAN_Procedure.status |= BIT2;	
-							else
-								CAN_Procedure.status &= ~BIT2;	
-						}
-					}
-				}
-			}
-			else
-			{
-				CAN_Procedure.status &= ~BIT0;
-			}
-		#else		
-			CAN_Procedure.status = (BIT0|BIT1);//流程号关闭，则默认具有正确流程号
-		#endif
-    #ifdef SteeringMotor  //转向电机报文处理
-    if((rx_message.IDE == CAN_Id_Standard)&&(rx_message.RTR==CAN_RTR_Data))
-    {
-      #ifdef PassRobot
-        #if ID_SELF==MOTOR_1_2
-          if((rx_message.StdId==0x306)||(rx_message.StdId==0x307))
-        #elif ID_SELF==MOTOR_0_3
-          if((rx_message.StdId==0x305)||(rx_message.StdId==0x308))
-        #elif ID_SELF==MOTOR_all
-          if((rx_message.StdId==0x305)||(rx_message.StdId==0x306)||(rx_message.StdId==0x307))
-        #elif ID_SELF==MOROE_4_and_2
-          if((rx_message.StdId==0x305)||(rx_message.StdId==0x306)||(rx_message.StdId==0x307)||(rx_message.StdId==0x308))
-        #endif
-        {
-          u8 SteeringID=rx_message.StdId-0x305;
-          if(rx_message.Data[0]=='C'&&rx_message.Data[1]=='W'&&rx_message.Data[2]=='H'&&rx_message.Data[3]=='U')//自检
-          {
-            answer_master(&rx_message);
-          }
-          else if(rx_message.Data[0] == 'C' && rx_message.Data[1] == 'H')//旋转
-          {
-            DecodeS16Data(&s16TempData[SteeringID],&rx_message.Data[2]);
-            motor[SteeringID].valueSet.angle = -s16TempData[SteeringID]/30.f;
-            motor[SteeringID].begin=true;
-          }
-          else if(rx_message.Data[0]=='S'&&rx_message.Data[1]=='P')//速度设定
-          {
-            DecodeS16Data(&u16TempData[SteeringID],&rx_message.Data[2]);
-            motor[SteeringID].limit.posSPlimit=u16TempData[SteeringID];
-            answer_master(&rx_message);
-          }
-          else if(rx_message.Data[0]=='M'&&rx_message.Data[1]=='O'&&rx_message.Data[2]==1)//电机使能
-          {
-            motor[SteeringID].mode=position;//位置模式
-            motor[SteeringID].begin=true;//不锁位置，立即运行
-            motor[SteeringID].enable=true;//电机使能
-            answer_master(&rx_message);
-          }
-          else if(rx_message.Data[0]=='M'&&rx_message.Data[1]=='O'&&rx_message.Data[2]==0)//电机失能
-          {
-            motor[SteeringID].enable=false;
-            motor[SteeringID].begin=false;
-            answer_master(&rx_message);
-          }
-          else if(rx_message.Data[0]=='S'&&rx_message.Data[1]=='T')//急停
-          {
-            motor[SteeringID].begin=false;//锁当前位置
-            answer_master(&rx_message);
-          }
-          else if(rx_message.Data[0] == 'B' && rx_message.Data[1] == 'B' && rx_message.Data[2] == 'G')
-          {
-            feedbackAngle(rx_message.StdId);
-          }
-        }
-        if(rx_message.StdId==0x309)
-        {
-          pawAction=rx_message.Data[0]+1;
-        }
-        if(rx_message.StdId==0x320)
-        {
-            DecodeS16Data(&s16TempData[0], &rx_message.Data[0]);
-            DecodeS16Data(&s16TempData[1], &rx_message.Data[2]);
-            DecodeS16Data(&s16TempData[2], &rx_message.Data[4]);
-            DecodeS16Data(&s16TempData[3], &rx_message.Data[6]);              
-          #if ID_SELF==MOTOR_1_2
-            motor[1].valueSet.angle = s16TempData[1]/30.f*GearRatio;
-            motor[1].begin=true;motor[1].mode=position;
-            motor[2].valueSet.angle = s16TempData[2]/30.f*GearRatio;
-            motor[2].begin=true;motor[2].mode=position;
-          #elif ID_SELF==MOTOR_0_3
-            motor[0].valueSet.angle = s16TempData[0]/30.f*GearRatio;
-            motor[0].begin=true;motor[0].mode=position;
-            motor[3].valueSet.angle = s16TempData[3]/30.f*GearRatio;
-            motor[3].begin=true;motor[3].mode=position;
-          #elif ID_SELF==MOTOR_all
-            motor[0].valueSet.angle = s16TempData[0]/30.f*GearRatio;
-            motor[0].begin=true;motor[0].mode=position;
-            motor[1].valueSet.angle = s16TempData[1]/30.f*GearRatio;
-            motor[1].begin=true;motor[1].mode=position;
-            motor[2].valueSet.angle = s16TempData[2]/30.f*GearRatio;
-            motor[2].begin=true;motor[2].mode=position;
-          #elif ID_SELF==MOROE_4_and_2
-            motor[0].valueSet.angle = -s16TempData[0]/30.f;
-            motor[0].begin=true;motor[0].mode=position;
-            motor[1].valueSet.angle = -s16TempData[1]/30.f;
-            motor[1].begin=true;motor[1].mode=position;
-            motor[2].valueSet.angle = -s16TempData[2]/30.f;
-            motor[2].begin=true;motor[2].mode=position;
-            motor[3].valueSet.angle = -s16TempData[3]/30.f;
-            motor[3].begin=true;motor[3].mode=position;
-          #endif
-            answer_master(&rx_message);
-        }
-        #if ID_SELF==MOTOR_0_3 | ID_SELF==MOTOR_all
-          #ifdef USE_ELMO
-            if((rx_message.StdId==Elmo_Motor1_RX)||(rx_message.StdId==Elmo_Motor2_RX)||(rx_message.StdId==Elmo_Motor3_RX)||(rx_message.StdId==Elmo_Motor4_RX))
-            {
-              if((rx_message.Data[0]=='M'&&rx_message.Data[1]=='O'&&(rx_message.Data[3]&BIT6)!=1))
-              {
-                u8 ElmoID=rx_message.StdId-0x281;
-                ELMOmotor[ElmoID].enable=1;
-              }
-            }
-          #elif defined USE_EPOS
-            if((rx_message.StdId==Elmo_Motor1_RX)||(rx_message.StdId==Elmo_Motor2_RX)||(rx_message.StdId==Elmo_Motor3_RX)||(rx_message.StdId==Elmo_Motor4_RX))
-            {
-        
-            }
-          #endif
-        #endif
-      #elif defined TryRobot
-
-      #endif
-    }
-    #elif defined ActionMotor //执行电机报文处理
+    
     if((rx_message.IDE == CAN_Id_Extended)&&(rx_message.RTR==CAN_RTR_Data))
     {
-      if(rx_message.Data[0]==0x00)//广播帧
+      if((rx_message.Data[0]=='S')&&(rx_message.Data[1]=='U'))//一次性发射
       {
-        if((rx_message.Data[1]=='C')&&(rx_message.Data[2]=='W')&&(rx_message.Data[3]=='H')&&(rx_message.Data[4]=='U'))
-          answer_master(&rx_message);
+        GPIOB->ODR ^= PIN12;
+        
+        CanTxMsg tx_message;
+        tx_message.IDE = CAN_Id_Extended;
+        tx_message.ExtId = 0x05141316;
+        tx_message.RTR = CAN_RTR_Data;
+        tx_message.DLC = rx_message.DLC;
+        memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+        CAN_Transmit(CAN1, &tx_message);
       }
-      if(rx_message.Data[0]==0x03)//机构ID
+      else if((rx_message.Data[0]=='Z')&&(rx_message.Data[1]=='S'))//转箭速度
       {
-      #ifdef PassRobot
-        if((rx_message.Data[1]==('W'+0x40))&&(rx_message.Data[2]=='I')&&(rx_message.Data[3]=='N'))
-        {
-          DecodeS16Data(&ELMOmotor[rx_message.Data[6]-1].valSet.speed, &rx_message.Data[4]);
-          kick[rx_message.Data[6]-1].begin=true;
-          answer_master(&rx_message);
-        }
-      #elif defined TryRobot
-
-      #endif
+        float speed;
+        DecodeFloatData_From_4byte(&speed, &rx_message.Data[3]);
+        VESCmotor[0].enable = rx_message.Data[2];
+        VESCmotor[0].valSet.speed = speed;
+        
+        CanTxMsg tx_message;
+        tx_message.IDE = CAN_Id_Extended;
+        tx_message.ExtId = 0x05141317;
+        tx_message.RTR = CAN_RTR_Data;
+        tx_message.DLC = rx_message.DLC;
+        memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+        CAN_Transmit(CAN1, &tx_message);
       }
-      if(rx_message.Data[0]==0x04)
+      else if((rx_message.Data[0]=='F')&&(rx_message.Data[1]=='J'))//转台角度
       {
-        if((rx_message.Data[1]==('S'+0x40))&&(rx_message.Data[2]=='N'))//气缸开
-        {
-          flag.valve[rx_message.Data[3]-1]=1;
-        }
-        else if((rx_message.Data[1]==('E'+0x40))&&(rx_message.Data[2]=='F'))//气缸关
-        {
-          flag.valve[rx_message.Data[3]-1]=0;
-        }
+        motor[0].enable = rx_message.Data[2];
+        float angle;
+        DecodeFloatData_From_4byte(&angle, &rx_message.Data[3]);
+        motor[0].valueSet.angle = angle;
+      
+        CanTxMsg tx_message;
+        tx_message.IDE = CAN_Id_Extended;
+        tx_message.ExtId = 0x05141317;
+        tx_message.RTR = CAN_RTR_Data;
+        tx_message.DLC = rx_message.DLC;
+        memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+        CAN_Transmit(CAN1, &tx_message);
       }
+      else if((rx_message.Data[0]=='G')&&(rx_message.Data[1]=='D'))//转台高度
+      {
+        motor[1].enable = rx_message.Data[2];
+        float angle;
+        DecodeFloatData_From_4byte(&angle, &rx_message.Data[3]);
+        motor[1].valueSet.angle = angle;
+      
+        CanTxMsg tx_message;
+        tx_message.IDE = CAN_Id_Extended;
+        tx_message.ExtId = 0x05141317;
+        tx_message.RTR = CAN_RTR_Data;
+        tx_message.DLC = rx_message.DLC;
+        memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+        CAN_Transmit(CAN1, &tx_message);
+      }
+      else if((rx_message.Data[0]=='F')&&(rx_message.Data[1]=='Z'))//3508寻零
+      {
+        motor[0].enable = true;
+        motor[0].mode = zero;
+        motor[0].status.zero = false;
+        motor[1].enable = true;
+        motor[1].mode = zero;
+        motor[1].status.zero = false;
+        
+        CanTxMsg tx_message;
+        tx_message.IDE = CAN_Id_Extended;
+        tx_message.ExtId = 0x05141317;
+        tx_message.RTR = CAN_RTR_Data;
+        tx_message.DLC = rx_message.DLC;
+        memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+        CAN_Transmit(CAN1, &tx_message);
+      }
+      else if((rx_message.Data[0]=='S')&&(rx_message.Data[1]=='T')&&(rx_message.Data[2]=='A')&&(rx_message.Data[3]=='L'))//急停
+      {
+        VESCmotor[0].enable = false;
+        motor[0].begin = false;
+        motor[1].begin = false;
+          
+        CanTxMsg tx_message;
+        tx_message.IDE = CAN_Id_Extended;
+        tx_message.ExtId = 0x05141317;
+        tx_message.RTR = CAN_RTR_Data;
+        tx_message.DLC = rx_message.DLC;
+        memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+        CAN_Transmit(CAN1, &tx_message);
+      }
+#if USE_TMOTOR
+        if(rx_message.ExtId == 0x00010500)
+        {
+            if((rx_message.Data[0]=='G')&&(rx_message.Data[1]=='L'))//重置腿零点
+            {
+                tmotor[TMOTOR_FR].status.isSetZero = true;
+                tmotor[TMOTOR_FL].status.isSetZero = true;
+                tmotor[TMOTOR_RR].status.isSetZero = true;
+                tmotor[TMOTOR_RL].status.isSetZero = true;
+                
+                CanTxMsg tx_message;
+                tx_message.IDE = CAN_Id_Extended;
+                tx_message.ExtId = 0x00050101;
+                tx_message.RTR = CAN_RTR_Data;
+                tx_message.DLC = rx_message.DLC;
+                memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+                CAN_Transmit(CAN1, &tx_message);
+            }
+            else if((rx_message.Data[0]=='M')&&(rx_message.Data[1]=='O')) //腿 失能使能
+            {
+                bool state = rx_message.Data[2];
+                if(state)
+                {
+                    tmotor[TMOTOR_FL].mode = position;
+                    tmotor[TMOTOR_FR].mode = position;
+                    tmotor[TMOTOR_RL].mode = position;
+                    tmotor[TMOTOR_RR].mode = position;
+                }
+                else
+                {
+                    tmotor[TMOTOR_FL].mode = 0;
+                    tmotor[TMOTOR_FR].mode = 0;
+                    tmotor[TMOTOR_RL].mode = 0;
+                    tmotor[TMOTOR_RR].mode = 0;
+                }
+                
+                CanTxMsg tx_message;
+                tx_message.IDE = CAN_Id_Extended;
+                tx_message.ExtId = 0x00050101;
+                tx_message.RTR = CAN_RTR_Data;
+                tx_message.DLC = rx_message.DLC;
+                memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+                CAN_Transmit(CAN1, &tx_message);
+            }
+            else if((rx_message.Data[0]=='K')&&(rx_message.Data[1]=='L')) //步骤
+            {
+                s32 index = 3;
+//                overturn.downtim = get_s16_from_buffer(rx_message.Data, &index);
+                overturn.process = rx_message.Data[2];
+                
+                CanTxMsg tx_message;
+                tx_message.IDE = CAN_Id_Extended;
+                tx_message.ExtId = 0x00050101;
+                tx_message.RTR = CAN_RTR_Data;
+                tx_message.DLC = rx_message.DLC;
+                memcpy(&tx_message.Data[0],&rx_message.Data[0],rx_message.DLC);
+                CAN_Transmit(CAN1, &tx_message);
+            }
+            else if((rx_message.Data[0]=='A')&&(rx_message.Data[1]=='S')) //查询腿角度
+            {
+                CanTxMsg tx_message;
+                tx_message.IDE = CAN_Id_Extended;
+                tx_message.ExtId = 0x00050101;
+                tx_message.RTR = CAN_RTR_Data;
+                tx_message.DLC = 7;
+                tx_message.Data[0] = 'A';
+                tx_message.Data[1] = 'S';
+                tx_message.Data[2] = 'K';
+                s16 speed_front = tmotor[TMOTOR_FL].valReal.angle;
+				s16 speed_rear = tmotor[TMOTOR_RL].valReal.angle;
+                EncodeS16Data(&speed_front, &tx_message.Data[3]);
+                EncodeS16Data(&speed_rear, &tx_message.Data[5]);
+                CAN_Transmit(CAN1, &tx_message);
+            }
+        }
+#endif
     }
-    #endif
   }
 }
   

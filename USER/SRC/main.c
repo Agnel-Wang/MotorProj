@@ -1,5 +1,7 @@
 #include "main.h"
+
 int main(void)
+
 {
     Delay_ms(3000);//延时启动，等待机构上电
 	SystemInit();
@@ -35,14 +37,6 @@ static void Task_Start(void *pdata)
 	OSTaskCreate(Task_Flag, (void *)0,(OS_STK *)&FLAG_TASK_STK[FLAG_STK_SIZE - 1], FLAG_TASK_PRIO);
 	OSTaskCreate(Task_Motor, (void *)0, (OS_STK *)&MOTOR_TASK_STK[MOTOR_STK_SIZE - 1],MOTOR_TASK_PRIO);
 	OSTaskCreate(Task_Scope, (void *)0,(OS_STK *)&SCOPE_TASK_STK[SCOPE_STK_SIZE - 1], SCOPE_TASK_PRIO);
-    OSTimeDly(100);
-  /****初始工作****/
-  
-  
-  
-  
-  
-  /****************/
 	Led8DisData(0);
 	Beep_Show(2);//上电提醒，初始完成
     OSTaskSuspend(START_TASK_PRIO); //挂起起始任务
@@ -100,7 +94,14 @@ static void Task_Flag(void *pdata)
 static void Task_Motor(void *pdata) 
 {
   pdata = pdata;
-  NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);
+ // NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);NMT_Operational(CAN1);OSTimeDly(5);
+#ifdef USE_DJ
+  OSTimeDly(1000);
+  for(int i=0;i<8;i++)
+    motor[i].status.isSetZero=true;
+  
+  //motor[2].enable = ENABLE;
+#endif
 #ifdef USE_ELMO
   for(int i=0;i<50;i++)
   {
@@ -120,25 +121,25 @@ static void Task_Motor(void *pdata)
     MO_CAN1(0,SetData,0);
     MO_CAN1(0,SetData,0);
 #elif defined USE_VESC
-  
-  
+  OSTimeDly(100);
+  for(int i=0;i<8;i++)
+    VESCmotor[i].status.isSetZero=true;
 #endif
+//    tmotor[0].status.isSetZero = 1;
+//    tmotor[3].status.isSetZero = 1;
+//    tmotor[4].status.isSetZero = 1;
+//    tmotor[6].status.isSetZero = 1;
+      OSTimeDly(500);
+    
+//    tmotor[0].enable = true;
+//    tmotor[3].enable = true;
+//    tmotor[4].enable = true;
+//    tmotor[6].enable = true;
   while (1) 
   {
-    //摩擦轮发射
-    if(VESC_fire)
-    {
-      if(motor[1].status.arrived)
-      {
-        VESCmotor[0].valSet.speed=-VESC_fire_speed;VESCmotor[1].valSet.speed=-VESC_fire_speed;
-        OSTimeDly(20000);
-        motor[1].valueSet.angle+=360;
-        VESC_fire=false;
-        OSTimeDly(20000);
-        VESCmotor[0].valSet.speed=0;VESCmotor[1].valSet.speed=0;
-      }
-    }
-    OSTimeDly(500);
+//      OSTimeDly(40000);
+//      overturn.process++;
+      OSTimeDly(500);
   }
 }
 
@@ -147,7 +148,7 @@ static void Task_Scope(void *pdata)
 {
   while (1) 
   {
-    VS4Channal_Send(motor[5].valueSet.speed, motor[5].valueReal.speed, motor[5].valueSet.angle, motor[5].valueReal.angle);
+    VS4Channal_Send(tmotor[1].valReal.angle, tmotor[1].valSet.angle, 0, 0);
     OSTimeDly(70);
   }
 }
